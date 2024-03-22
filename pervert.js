@@ -8,6 +8,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const moment = require('moment'); // Import moment.js library
 const flash = require('connect-flash');
 
+
 // Add the flash middleware
 
 
@@ -15,6 +16,8 @@ const flash = require('connect-flash');
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(flash());
+app.set('view engine', 'ejs');
+
 
 
 // Connect to MongoDB
@@ -104,8 +107,10 @@ app.post('/login', passport.authenticate('local', {
 
 // Dashboard route
 app.get('/dashboard', (req, res) => {
-  res.sendFile(__dirname + '/dashboard.html');
+  res.render('dashboard', { username: req.user.user_id });
 });
+
+
 
 // Registration route
 app.post('/register', async (req, res) => {
