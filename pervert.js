@@ -1,14 +1,21 @@
-// app.js
-
+// Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const moment = require('moment'); // Import moment.js library
+const flash = require('connect-flash');
 
+// Add the flash middleware
+
+
+// Create Express app
 const app = express();
 app.use(express.static(__dirname + '/public'));
+app.use(flash());
+
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/ReClaim', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -20,67 +27,66 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-
+// Define user schema
 const userSchema = new mongoose.Schema({
   user_id: { type: String, required: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
-  email: { type: String },  // Make email optional
-  address: { type: String },  // Make address optional
-  phone: { type: String },  // Make phone optional
+  email: { type: String, required: true },
+  dob: { type: Date, required: true },
+  address: { type: String },
+  phone: { type: String },
   lost_Items: { type: Array, default: [] },
   found_Items: { type: Array, default: [] },
   claimed_Items: { type: Array, default: [] },
 });
 
+// Create User model
 const User = mongoose.model('users', userSchema);
 
-module.exports = User;
-
-
-// Body Parser Middleware
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Express Session Middleware
 app.use(session({
   secret: 'secret',
   resave: true,
   saveUninitialized: true
 }));
-
-// Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport Local Strategy
+// Passport local strategy for user authentication
 passport.use(new LocalStrategy(
-  function (username, password, done) {
-    User.findOne({ user_id: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (user.password !== password) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-    });
+  function(username, password, done) {
+    User.findOne({ user_id: username })
+      .then(user => {
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+        if (user.password !== password) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        return done(null, user);
+      })
+      .catch(err => done(err));
   }
 ));
 
-// Serialize User
+// Serialize and deserialize user
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
-// Deserialize User
-passport.deserializeUser(function (id, done) {
-  User.findById(id, function (err, user) {
-    done(err, user);
-  });
+passport.deserializeUser(async function (id, done) {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
 });
 
-// Serve HTML files
+
+// Routes
 app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/login.html');
 });
@@ -89,29 +95,34 @@ app.get('/register', (req, res) => {
   res.sendFile(__dirname + '/register.html');
 });
 
-// Login Route
+// Login route
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/', // Redirect to home on successful login
-  failureRedirect: '/login', // Redirect to login page on failure
+  successRedirect: '/dashboard',
+  failureRedirect: '/login',
+  failureFlash: true
 }));
 
-// Registration Route
+// Dashboard route
+app.get('/dashboard', (req, res) => {
+  res.sendFile(__dirname + '/dashboard.html');
+});
+
+// Registration route
 app.post('/register', async (req, res) => {
   try {
-    const { name, username, password } = req.body;
+    const { name, username, password, email, dob } = req.body;
+    const parsedDob = moment(dob, 'DD/MM/YYYY').toDate();
 
-    // Assuming you have the necessary fields in the registration form
     const newUser = new User({
       user_id: username,
       password: password,
       name: name,
-      // Add other fields as needed
+      email: email,
+      dob: parsedDob,
     });
 
-    // Save the user to the database
     await newUser.save();
 
-    // Redirect to the login page after successful registration
     res.redirect('/login');
   } catch (error) {
     console.error(error.message);
@@ -119,21 +130,11 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Logout Route
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
 });
 
-// Home Route (protected)
-app.get('/', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send('Home Page');
-  } else {
-    res.redirect('/login');
-  }
-});
-
-// Start Server
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
