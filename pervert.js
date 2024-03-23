@@ -9,14 +9,19 @@ const moment = require('moment'); // Import moment.js library
 const flash = require('connect-flash');
 
 
+
+
+
 // Add the flash middleware
 
 
 // Create Express app
 const app = express();
 app.use(express.static(__dirname + '/public'));
-app.use(flash());
 app.set('view engine', 'ejs');
+app.use(flash());
+
+
 
 
 
@@ -44,8 +49,17 @@ const userSchema = new mongoose.Schema({
   claimed_Items: { type: Array, default: [] },
 });
 
+const adminSchema = new mongoose.Schema({
+  admin_id: { type: String, required: true },
+  password: { type: String, required: true },
+  email: { type: String, required: true },
+  admin_username: { type: String, required: true }
+});
+
 // Create User model
 const User = mongoose.model('users', userSchema);
+const Admin = mongoose.model('admins', adminSchema);
+
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -105,6 +119,53 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true
 }));
 
+//admin
+
+passport.use('admin', new LocalStrategy(
+  function(username, password, done) {
+    Admin.findOne({ admin_id: username, password: password })
+      .then(admin => {
+        if (!admin) {
+          return done(null, false, { message: 'Incorrect admin credentials.' });
+        }
+        return done(null, admin);
+      })
+      .catch(err => done(err));
+  }
+));
+
+// Serialize and deserialize admin
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async function (id, done) {
+  try {
+    const admin = await Admin.findById(id);
+    done(null, admin);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
+// Routes
+app.get('/adminLogin', (req, res) => {
+  res.render('adminLogin');
+});
+
+app.post('/adminLogin', passport.authenticate('admin', {
+  successRedirect: '/adminDashboard',
+  failureRedirect: '/adminLogin',
+  failureFlash: true
+}));
+
+app.get('/adminDashboard', (req, res) => {
+  res.render('adminDashboard', { admin_username: req.admin.admin_id });
+});
+
+
+
+
 // Dashboard route
 app.get('/dashboard', (req, res) => {
   res.render('dashboard', { username: req.user.user_id });
@@ -117,6 +178,13 @@ app.post('/register', async (req, res) => {
   try {
     const { name, username, password, email, dob } = req.body;
     const parsedDob = moment(dob, 'DD/MM/YYYY').toDate();
+
+    // Check if the username already exists
+    const existingUser = await User.findOne({ user_id: username });
+    if (existingUser) {
+      req.flash('error', 'Username already exists');
+      return res.redirect('/register');
+    }
 
     const newUser = new User({
       user_id: username,
@@ -134,6 +202,8 @@ app.post('/register', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 app.get('/logout', (req, res) => {
   req.logout();

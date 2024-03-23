@@ -4,9 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="login.css">
+    <style>
+        .container {
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .boxes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc; /* Default color for boxes */
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .box:hover {
+            background-color: #999; /* Color change on hover */
+        }
+        .box a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the dashboard, <%= username %>!</h1>
-    <p>This is your personalized dashboard.</p>
+    <header>
+        <div class="logo">ReClaim</div>
+        <input type="checkbox" id="nav_check" hidden>
+        <nav>
+            <ul>
+                <li>
+                    <a href="" class="active">Home</a>
+                </li>
+                <li>
+                    <a href="">About Us</a>
+                </li>
+                <li>
+                    <a href="">Contact Us</a>
+                </li>
+                <li>
+                    <a href="login">Profile</a>
+                </li>
+                <li>
+                    <a href="register">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <label for="nav_check" class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </label>
+    </header>
+
+    <div class="container">
+        <h1 class="header">Welcome to the Dashboard</h1>
+        <div class="boxes">
+            <div class="box" style="background-color: red;"><a href="#">Report an Item</a></div>
+            <div class="box" style="background-color: blue;"><a href="#">Search Items</a></div>
+            <div class="box" style="background-color: green;"><a href="#">Status</a></div>
+            <div class="box" style="background-color: orange;"><a href="#">History</a></div>
+            <div class="box" style="background-color: purple;"><a href="#">Feedback</a></div>
+        </div>
+    </div>
 </body>
 </html>
