@@ -136,12 +136,13 @@ passport.use('admin', new LocalStrategy(
 
 // Serialize and deserialize admin
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  done(null, admin.admin_id); // Assuming user.admin_id is the correct field for the admin's ID
 });
+
 
 passport.deserializeUser(async function (id, done) {
   try {
-    const admin = await Admin.findById(id);
+    const admin = await Admin.findOne({ admin_id: id }); // Assuming admin_id is the correct field for the admin's ID
     done(null, admin);
   } catch (error) {
     done(error, null);
@@ -160,8 +161,10 @@ app.post('/adminLogin', passport.authenticate('admin', {
 }));
 
 app.get('/adminDashboard', (req, res) => {
-  res.render('adminDashboard', { admin_username: req.admin.admin_id });
+  console.log(req.user); // Log the user object for debugging
+  res.render('adminDashboard', { admin_id: req.user ? req.user.admin_id : null });
 });
+
 
 
 
