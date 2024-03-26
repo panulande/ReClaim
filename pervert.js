@@ -208,10 +208,26 @@ app.post('/register', async (req, res) => {
 
 
 
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/login');
+// Define a route handler to render the profile page
+app.get('/profile', async (req, res) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      // User is not logged in, redirect to login page
+      return res.redirect('/login');
+    }
+
+    // Fetch user details from the database based on user ID
+    const user = await User.findById(req.user._id);
+
+    // Render the profile page template and pass user data to it
+    res.render('profile', { user });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
