@@ -7,7 +7,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const moment = require('moment'); // Import moment.js library
 const flash = require('connect-flash');
-
+const lostItemRoutes = require('./routes/lostItemRoutes');
 
 
 
@@ -20,6 +20,7 @@ const app = express();
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 app.use(flash());
+app.use('/submit-lost', lostItemRoutes);
 
 
 
@@ -70,6 +71,14 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
 
 // Passport local strategy for user authentication
 passport.use(new LocalStrategy(
@@ -170,9 +179,10 @@ app.get('/adminDashboard', (req, res) => {
 
 
 // Dashboard route
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', isAuthenticated, (req, res) => {
   res.render('dashboard', { username: req.user.user_id });
 });
+
 
 
 
@@ -227,6 +237,12 @@ app.get('/profile', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.get('/report', isAuthenticated, (req, res) => {
+  res.render('report');
+});
+
+
 
 
 // Start server
