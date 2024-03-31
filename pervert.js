@@ -59,12 +59,25 @@ const lostItemSchema = new mongoose.Schema({
   reportedItems: { type: String, default: 'active' } // Default value 'active' for reportedItems
 });
 
+const foundItemSchema = new mongoose.Schema({
+  itemName: String,
+  date: Date,
+  place: String,
+  description: String,
+  photo: Buffer, // Store file data as Buffer
+  status: { type: String, default: 'reported' }, // Default value 'reported' for status
+  reportedItems: { type: String, default: 'active' } // Default value 'active' for reportedItems
+});
+
+
 
 
 // Create User model
 const User = mongoose.model('users', userSchema);
 const Admin = mongoose.model('admins', adminSchema);
 const LostItem = mongoose.model('lost_items', lostItemSchema);
+const FoundItem = mongoose.model('found_items', foundItemSchema);
+
 
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -282,6 +295,27 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
   } catch (error) {
       console.error('Error reporting lost item:', error);
       res.status(500).send('An error occurred while reporting the lost item.');
+  }
+});
+
+app.post('/submit-found', upload.single('photo'), async (req, res) => {
+  try {
+      const { itemName, date, place, description } = req.body;
+      const photo = req.file.buffer; // Get file data from memory
+
+      const newItem = new FoundItem({
+          itemName,
+          date,
+          place,
+          description,
+          photo
+      });
+
+      await newItem.save();
+      res.status(200).send('Item reported successfully!');
+  } catch (error) {
+      console.error('Error reporting found item:', error);
+      res.status(500).send('An error occurred while reporting the found item.');
   }
 });
 
