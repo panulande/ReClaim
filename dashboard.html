@@ -1,13 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="login.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Listings</title>
+  <style>
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
 
+    .product {
+      width: 200px;
+      border: 1px solid #ccc;
+      margin: 10px;
+      padding: 10px;
+    }
+
+    .product img {
+      width: 100%;
+      height: auto;
+    }
+
+    .product h3 {
+      margin-top: 0;
+    }
+
+    .rating {
+      color: gold;
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to the dashboard, <%= username %></h1>
+  <div class="product-list">
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="Product Image">
+      <h3>Product Name 1</h3>
+      <p>Description of Product 1.</p>
+      <p>Price: $19.99</p>
+      <div class="rating">Rating: 4.5/5</div>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/150" alt="Product Image">
+      <h3>Product Name 2</h3>
+      <p>Description of Product 2.</p>
+      <p>Price: $24.99</p>
+      <div class="rating">Rating: 4.2/5</div>
+    </div>
+    <!-- Add more product listings here -->
+  </div>
 </body>
 </html>

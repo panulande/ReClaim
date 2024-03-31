@@ -9,6 +9,11 @@ const moment = require('moment'); // Import moment.js library
 const flash = require('connect-flash');
 const multer = require('multer');
 const path = require('path');
+const Grid = require('gridfs-stream');
+const { GridFSBucket } = require('mongodb');
+const itemsPerPage = 6;
+
+
 
 
 // Create Express app
@@ -20,6 +25,13 @@ app.use(flash());
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/ReClaim', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
+
+let gfs;
+mongoose.connection.once('open', () => {
+    gfs = Grid(mongoose.connection.db, mongoose.mongo);
+    gfs.collection('lost_items'); // Specify the GridFS collection
+});
+
 
 // Check for MongoDB connection errors
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -318,6 +330,39 @@ app.post('/submit-found', upload.single('photo'), async (req, res) => {
       res.status(500).send('An error occurred while reporting the found item.');
   }
 });
+
+ // Define the number of items per page
+
+app.get('/lost', async (req, res) => {
+  try {
+      // Fetch only active lost items from the database
+      const activeLostItems = await LostItem.find({ reportedItems: 'active' });
+
+      // Calculate total number of pages based on total number of items and items per page
+      const totalPages = Math.ceil(activeLostItems.length / itemsPerPage);
+
+      // Extract page number from query parameter, default to 1 if not provided
+      const currentPage = parseInt(req.query.page) || 1;
+
+      // Calculate starting and ending index for the current page
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, activeLostItems.length - 1);
+
+      // Get the items for the current page
+      const currentLostItems = activeLostItems.slice(startIndex, endIndex + 1);
+
+      // Render the HTML page and pass the retrieved data and pagination information
+      res.render('index', { lostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
+
+  } catch (error) {
+      console.error('Error fetching active lost items:', error);
+      res.status(500).send('An error occurred while fetching active lost items.');
+  }
+});
+
+
+
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
