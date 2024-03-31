@@ -54,8 +54,11 @@ const lostItemSchema = new mongoose.Schema({
   place: String,
   description: String,
   photo: Buffer, // Store file data as Buffer
-  document: Buffer // Store file data as Buffer
+  document: Buffer, // Store file data as Buffer
+  status: { type: String, default: 'reported' }, // Default value 'reported' for status
+  reportedItems: { type: String, default: 'active' } // Default value 'active' for reportedItems
 });
+
 
 
 // Create User model
@@ -281,7 +284,6 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
       res.status(500).send('An error occurred while reporting the lost item.');
   }
 });
-
 
 // Start server
 const PORT = process.env.PORT || 3000;
