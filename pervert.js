@@ -53,8 +53,8 @@ const lostItemSchema = new mongoose.Schema({
   date: Date,
   place: String,
   description: String,
-  photo: String, // Store the file path, not the actual file
-  document: String // Store the file path, not the actual file
+  photo: Buffer, // Store file data as Buffer
+  document: Buffer // Store file data as Buffer
 });
 
 
@@ -63,14 +63,19 @@ const User = mongoose.model('users', userSchema);
 const Admin = mongoose.model('admins', adminSchema);
 const LostItem = mongoose.model('lost_items', lostItemSchema);
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-      cb(null, './uploads');
-  },
-  filename: function (req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//       cb(null, './uploads');
+//   },
+//   filename: function (req, file, cb) {
+//       cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//   }
+// });
+
+
+
+const storage = multer.memoryStorage(); // Store file data in memory
+
 const upload = multer({ storage: storage });
 
 
@@ -257,8 +262,8 @@ app.get('/report', isAuthenticated, (req, res) => {
 app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'document', maxCount: 1 }]), async (req, res) => {
   try {
       const { itemName, date, place, description } = req.body;
-      const photo = req.files['photo'][0].path;
-      const document = req.files['document'][0].path;
+      const photo = req.files['photo'][0].buffer; // Get file data from memory
+      const document = req.files['document'][0].buffer; // Get file data from memory
 
       const newItem = new LostItem({
           itemName,
@@ -276,7 +281,6 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
       res.status(500).send('An error occurred while reporting the lost item.');
   }
 });
-
 
 
 // Start server
