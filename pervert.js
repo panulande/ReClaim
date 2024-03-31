@@ -7,12 +7,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const moment = require('moment'); // Import moment.js library
 const flash = require('connect-flash');
-const lostItemRoutes = require('./routes/lostItemRoutes');
-
-
-
-
-// Add the flash middleware
+const multer = require('multer');
+const path = require('path');
 
 
 // Create Express app
@@ -20,11 +16,6 @@ const app = express();
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 app.use(flash());
-app.use('/submit-lost', lostItemRoutes);
-
-
-
-
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/ReClaim', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -57,9 +48,30 @@ const adminSchema = new mongoose.Schema({
   admin_username: { type: String, required: true }
 });
 
+const lostItemSchema = new mongoose.Schema({
+  itemName: String,
+  date: Date,
+  place: String,
+  description: String,
+  photo: String, // Store the file path, not the actual file
+  document: String // Store the file path, not the actual file
+});
+
+
 // Create User model
 const User = mongoose.model('users', userSchema);
 const Admin = mongoose.model('admins', adminSchema);
+const LostItem = mongoose.model('lost_items', lostItemSchema);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, './uploads');
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
 
 
 // Middleware
@@ -242,6 +254,28 @@ app.get('/report', isAuthenticated, (req, res) => {
   res.render('report');
 });
 
+app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'document', maxCount: 1 }]), async (req, res) => {
+  try {
+      const { itemName, date, place, description } = req.body;
+      const photo = req.files['photo'][0].path;
+      const document = req.files['document'][0].path;
+
+      const newItem = new LostItem({
+          itemName,
+          date,
+          place,
+          description,
+          photo,
+          document
+      });
+
+      await newItem.save();
+      res.status(200).send('Item reported successfully!');
+  } catch (error) {
+      console.error('Error reporting lost item:', error);
+      res.status(500).send('An error occurred while reporting the lost item.');
+  }
+});
 
 
 
