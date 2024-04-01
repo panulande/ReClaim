@@ -1,10 +1,10 @@
-<!-- index.ejs -->
+<!-- found.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Items</title>
+    <title>Found Items</title>
     <link rel="stylesheet" href="login.css">
     <style>
         /* styles.css */
@@ -83,10 +83,10 @@
                     <a href="/dashboard">Home</a>
                 </li>
                 <li>
-                    <a href="lost" class="active"></a>Lost</a>
+                    <a href="lost">Lost</a>
                 </li>
                 <li>
-                    <a href="found">Found</a>
+                    <a href="found" class="active"></a>Found</a>
                 </li>
                 <li>
                     <a href="profile">Profile</a>
@@ -104,16 +104,16 @@
     </header>
 
     <div class="grid-container">
-        <% lostItems.forEach(item => { %>
+        <% foundItems.forEach(item => { %>
             <div class="item-box">
                 <div class="image-container">
-                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
+                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Found Item Photo">
                 </div>
                 <div class="details-container">
                     <p><strong>Name:</strong> <%= item.itemName %></p>
-                    <p><strong>Place Lost:</strong> <%= item.place %></p>
+                    <p><strong>Place Found:</strong> <%= item.place %></p>
                     <p><strong>User:</strong> <%= item.user_id %></p>
-                    <p><strong>Date Lost:</strong> <%= item.date.toDateString() %></p>
+                    <p><strong>Date Found:</strong> <%= item.date.toDateString() %></p>
                     
                 </div>
             </div>
@@ -121,7 +121,7 @@
     </div>
     <div class="pagination">
         <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="/lost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+            <a href="/found?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
         <% } %>
     </div>
 </body>

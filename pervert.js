@@ -357,32 +357,38 @@ app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async
 
  // Define the number of items per page
 
-app.get('/lost', async (req, res) => {
+
+app.get('/lost', isAuthenticated, async (req, res) => {
   try {
-      // Fetch only active lost items from the database
       const activeLostItems = await LostItem.find({ reportedItems: 'active' });
-
-      // Calculate total number of pages based on total number of items and items per page
       const totalPages = Math.ceil(activeLostItems.length / itemsPerPage);
-
-      // Extract page number from query parameter, default to 1 if not provided
       const currentPage = parseInt(req.query.page) || 1;
-
-      // Calculate starting and ending index for the current page
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = Math.min(startIndex + itemsPerPage - 1, activeLostItems.length - 1);
-
-      // Get the items for the current page
       const currentLostItems = activeLostItems.slice(startIndex, endIndex + 1);
-
-      // Render the HTML page and pass the retrieved data and pagination information
       res.render('index', { lostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
-
   } catch (error) {
       console.error('Error fetching active lost items:', error);
       res.status(500).send('An error occurred while fetching active lost items.');
   }
 });
+
+app.get('/found', isAuthenticated, async (req, res) => {
+  try {
+      const activeFoundItems = await FoundItem.find({ reportedItems: 'active' });
+      const totalPages = Math.ceil(activeFoundItems.length / itemsPerPage);
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, activeFoundItems.length - 1);
+      const currentFoundItems = activeFoundItems.slice(startIndex, endIndex + 1);
+      res.render('found', { foundItems: currentFoundItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+      console.error('Error fetching active found items:', error);
+      res.status(500).send('An error occurred while fetching active found items.');
+  }
+});
+
+
 
 
 
