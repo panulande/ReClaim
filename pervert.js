@@ -68,8 +68,23 @@ const lostItemSchema = new mongoose.Schema({
   photo: Buffer, // Store file data as Buffer
   document: Buffer, // Store file data as Buffer
   status: { type: String, default: 'reported' }, // Default value 'reported' for status
-  reportedItems: { type: String, default: 'active' } // Default value 'active' for reportedItems
+  reportedItems: { type: String, default: 'active' }, // Default value 'active' for reportedItems
+  user_id: { type: String, ref: 'User' } // Reference to the 'User' model using username
 });
+
+
+lostItemSchema.pre('save', async function(next) {
+  try {
+    // Check if user ID is available in session details
+    if (this.session && this.session.user_id) {
+      this.user_id = this.session.user_id; // Assign user_id from session details
+    }
+    next();
+  } catch (error) {
+    next(error); // Pass error to the next middleware
+  }
+});
+
 
 const foundItemSchema = new mongoose.Schema({
   itemName: String,
@@ -78,9 +93,9 @@ const foundItemSchema = new mongoose.Schema({
   description: String,
   photo: Buffer, // Store file data as Buffer
   status: { type: String, default: 'reported' }, // Default value 'reported' for status
-  reportedItems: { type: String, default: 'active' } // Default value 'active' for reportedItems
+  reportedItems: { type: String, default: 'active' }, // Default value 'active' for reportedItems
+  user_id: { type: String, ref: 'User' } // Reference to the 'User' model using username
 });
-
 
 
 
@@ -293,13 +308,17 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
       const photo = req.files['photo'][0].buffer; // Get file data from memory
       const document = req.files['document'][0].buffer; // Get file data from memory
 
+      // Assuming username is available in req.user.username
+      const username = req.user.user_id;
+
       const newItem = new LostItem({
           itemName,
           date,
           place,
           description,
           photo,
-          document
+          document,
+          user_id: username // Include username as user_id in the LostItem document
       });
 
       await newItem.save();
@@ -310,21 +329,26 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
   }
 });
 
-app.post('/submit-found', upload.single('photo'), async (req, res) => {
+
+app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async (req, res) => {
   try {
       const { itemName, date, place, description } = req.body;
-      const photo = req.file.buffer; // Get file data from memory
+      const photo = req.files['photo'][0].buffer; // Get file data from memory
 
-      const newItem = new FoundItem({
+      // Assuming username is available in req.user.username
+      const username = req.user.username;
+
+      const newFoundItem = new FoundItem({
           itemName,
           date,
           place,
           description,
-          photo
+          photo,
+          user_id: username // Include username as user_id in the FoundItem document
       });
 
-      await newItem.save();
-      res.status(200).send('Item reported successfully!');
+      await newFoundItem.save();
+      res.status(200).send('Item found reported successfully!');
   } catch (error) {
       console.error('Error reporting found item:', error);
       res.status(500).send('An error occurred while reporting the found item.');
