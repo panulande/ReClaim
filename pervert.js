@@ -390,11 +390,12 @@ app.get('/found', isAuthenticated, async (req, res) => {
 
 // Backend route to handle search requests
 // Backend route to handle search requests
-app.get('/search', async (req, res) => {
+// Route for searching found items
+app.get('/searchFound', async (req, res) => {
   try {
       const searchQuery = req.query.query; // Get the search query from the request
 
-      // Perform a database query to search for items with at least 50% match
+      // Perform a database query to search for found items with at least 50% match
       const searchResults = await FoundItem.find({
           itemName: { $regex: searchQuery, $options: 'i' }, // Case-insensitive match for itemName
           $expr: {
@@ -413,15 +414,45 @@ app.get('/search', async (req, res) => {
       const endIndex = Math.min(startIndex + itemsPerPage - 1, searchResults.length - 1);
       const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
 
-      // Render the template with search results
+      // Render the template with search results for found items
       res.render('searchResults', { foundItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
   } catch (error) {
-      console.error('Error searching items:', error);
-      res.status(500).json({ error: 'An error occurred while searching items.' }); // Send error response
+      console.error('Error searching found items:', error);
+      res.status(500).json({ error: 'An error occurred while searching found items.' }); // Send error response
   }
 });
 
+// Route for searching lost items
+app.get('/searchLost', async (req, res) => {
+  try {
+      const searchQuery = req.query.query; // Get the search query from the request
 
+      // Perform a database query to search for lost items with at least 50% match
+      const searchResults = await LostItem.find({
+          itemName: { $regex: searchQuery, $options: 'i' }, // Case-insensitive match for itemName
+          $expr: {
+              $gte: [
+                  { $strLenCP: "$itemName" }, // Length of itemName
+                  { $multiply: [{ $strLenCP: searchQuery }, 0.5] } // 50% of the length of the search query
+              ]
+          }
+      });
+
+      // Pagination logic
+      const itemsPerPage = 6; // Number of items per page
+      const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, searchResults.length - 1);
+      const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
+
+      // Render the template with search results for lost items
+      res.render('searchResults', { lostItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+      console.error('Error searching lost items:', error);
+      res.status(500).json({ error: 'An error occurred while searching lost items.' }); // Send error response
+  }
+});
 
 
 

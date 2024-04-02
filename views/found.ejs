@@ -166,7 +166,7 @@
             event.preventDefault(); // Prevent the default behavior of the Enter key
             const searchQuery = this.value; // Get the search query
             // Redirect to the search page with the search query
-            window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+            window.location.href = `/searchFound?query=${encodeURIComponent(searchQuery)}`;
         }
     });
 
@@ -174,7 +174,7 @@
         event.preventDefault(); // Prevent the default form submission behavior
         const searchQuery = document.getElementById('searchInput').value; // Get the search query
         // Redirect to the search page with the search query
-        window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+        window.location.href = `/searchFound?query=${encodeURIComponent(searchQuery)}`;
     });
 </script>
 
