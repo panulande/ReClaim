@@ -102,6 +102,12 @@
             <div></div>
         </label>
     </header>
+    <div class="search-container">
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
     <div class="grid-container">
         <% lostItems.forEach(item => { %>
@@ -124,5 +130,23 @@
             <a href="/lost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
         <% } %>
     </div>
+    <script>
+        document.getElementById('searchInput').addEventListener('keydown', async function(event) {
+            // Check if the pressed key is Enter (key code 13)
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default behavior of the Enter key
+                const searchQuery = this.value; // Get the search query
+                // Redirect to the search page with the search query
+                window.location.href = `/searchLost?query=${encodeURIComponent(searchQuery)}`;
+            }
+        });
+    
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            const searchQuery = document.getElementById('searchInput').value; // Get the search query
+            // Redirect to the search page with the search query
+            window.location.href = `/searchLost?query=${encodeURIComponent(searchQuery)}`;
+        });
+    </script>
 </body>
 </html>
