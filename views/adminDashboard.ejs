@@ -4,9 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .link {
+            width: 200px;
+            height: 100px; /* Height of each link division */
+            float: left; /* Float elements to make them appear side by side */
+            margin-right: 20px; /* Space between link divisions */
+            text-align: center; /* Center align text */
+            line-height: 100px; /* Center vertically */
+            font-size: 18px; /* Font size */
+            color: white; /* Text color */
+            font-weight: bold; /* Bold font weight */
+            text-decoration: none; /* Remove default underline for links */
+        }
+
+        /* Define different colors for each link division */
+        .link1 {
+            background-color: red;
+        }
+
+        .link2 {
+            background-color: blue;
+        }
+
+        .link3 {
+            background-color: green;
+        }
+
+        .link4 {
+            background-color: orange;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the dashboard</h1>
     
+    <!-- Four link divisions wrapped in anchor tags -->
+    <a href="found" class="link link1">Update Reports</a>
+    <a href="#" class="link link2">Link 2</a>
+    <a href="#" class="link link3">Link 3</a>
+    <a href="#" class="link link4">Link 4</a>
 </body>
 </html>

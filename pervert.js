@@ -139,38 +139,41 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
+function isAdminAuthenticated(req, res, next) {
+  if (req.isAuthenticated() && req.user && req.user.admin_id) {
+    return next();
+  }
+  res.redirect('/adminLogin');
+}
 
-// Passport local strategy for user authentication
-passport.use(new LocalStrategy(
+
+// Passport local strategy for admin authentication
+passport.use('admin', new LocalStrategy(
   function(username, password, done) {
-    User.findOne({ user_id: username })
-      .then(user => {
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
+    Admin.findOne({ admin_id: username, password: password })
+      .then(admin => {
+        if (!admin) {
+          return done(null, false, { message: 'Incorrect admin credentials.' });
         }
-        if (user.password !== password) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
+        return done(null, admin);
       })
       .catch(err => done(err));
   }
 ));
 
-// Serialize and deserialize user
-passport.serializeUser(function (user, done) {
-  done(null, user.id);
+// Serialize and deserialize admin
+passport.serializeUser(function (admin, done) {
+  done(null, admin.id); // Assuming admin.id is the correct field for the admin's ID
 });
 
 passport.deserializeUser(async function (id, done) {
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const admin = await Admin.findById(id); // Assuming admin ID is stored in _id field
+    done(null, admin);
   } catch (error) {
     done(error, null);
   }
 });
-
 
 // Routes
 app.get('/login', (req, res) => {
@@ -220,19 +223,22 @@ passport.deserializeUser(async function (id, done) {
 
 // Routes
 app.get('/adminLogin', (req, res) => {
-  res.render('adminLogin');
+  res.render('adminLogin'); // Render admin login form
 });
-
-app.post('/adminLogin', passport.authenticate('admin', {
-  successRedirect: '/adminDashboard',
-  failureRedirect: '/adminLogin',
-  failureFlash: true
-}));
-
-app.get('/adminDashboard', (req, res) => {
-  console.log(req.user); // Log the user object for debugging
+app.get('/adminDashboard', isAdminAuthenticated, (req, res) => {
   res.render('adminDashboard', { admin_id: req.user ? req.user.admin_id : null });
 });
+
+
+app.post('/adminLogin', passport.authenticate('admin', {
+  successRedirect: '/adminDashboard', // Redirect to admin dashboard on successful login
+  failureRedirect: '/adminLogin', // Redirect back to admin login page on failure
+  failureFlash: true // Enable flash messages for displaying error messages
+}));
+
+
+// Other admin routes...
+
 
 
 
@@ -358,35 +364,38 @@ app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async
  // Define the number of items per page
 
 
-app.get('/lost', isAuthenticated, async (req, res) => {
+// Route for displaying active lost items
+app.get('/lost', isAdminAuthenticated, async (req, res) => {
   try {
-      const activeLostItems = await LostItem.find({ reportedItems: 'active' });
-      const totalPages = Math.ceil(activeLostItems.length / itemsPerPage);
-      const currentPage = parseInt(req.query.page) || 1;
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = Math.min(startIndex + itemsPerPage - 1, activeLostItems.length - 1);
-      const currentLostItems = activeLostItems.slice(startIndex, endIndex + 1);
-      res.render('index', { lostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
+    const activeLostItems = await LostItem.find({ reportedItems: 'active' });
+    const totalPages = Math.ceil(activeLostItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, activeLostItems.length - 1);
+    const currentLostItems = activeLostItems.slice(startIndex, endIndex + 1);
+    res.render('index', { lostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
   } catch (error) {
-      console.error('Error fetching active lost items:', error);
-      res.status(500).send('An error occurred while fetching active lost items.');
+    console.error('Error fetching active lost items:', error);
+    res.status(500).send('An error occurred while fetching active lost items.');
   }
 });
 
-app.get('/found', isAuthenticated, async (req, res) => {
+// Route for displaying active found items
+app.get('/found', isAdminAuthenticated, async (req, res) => {
   try {
-      const activeFoundItems = await FoundItem.find({ reportedItems: 'active' });
-      const totalPages = Math.ceil(activeFoundItems.length / itemsPerPage);
-      const currentPage = parseInt(req.query.page) || 1;
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = Math.min(startIndex + itemsPerPage - 1, activeFoundItems.length - 1);
-      const currentFoundItems = activeFoundItems.slice(startIndex, endIndex + 1);
-      res.render('found', { foundItems: currentFoundItems, currentPage, totalPages, itemsPerPage });
+    const activeFoundItems = await FoundItem.find({ reportedItems: 'active' });
+    const totalPages = Math.ceil(activeFoundItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, activeFoundItems.length - 1);
+    const currentFoundItems = activeFoundItems.slice(startIndex, endIndex + 1);
+    res.render('found', { foundItems: currentFoundItems, currentPage, totalPages, itemsPerPage });
   } catch (error) {
-      console.error('Error fetching active found items:', error);
-      res.status(500).send('An error occurred while fetching active found items.');
+    console.error('Error fetching active found items:', error);
+    res.status(500).send('An error occurred while fetching active found items.');
   }
 });
+
 
 // Backend route to handle search requests
 // Backend route to handle search requests
@@ -462,4 +471,3 @@ app.get('/searchLost', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-//End of code
