@@ -447,7 +447,7 @@ app.get('/searchLost', async (req, res) => {
       const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
 
       // Render the template with search results for lost items
-      res.render('searchResults', { lostItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
+      res.render('peachResults', { lostItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
   } catch (error) {
       console.error('Error searching lost items:', error);
       res.status(500).json({ error: 'An error occurred while searching lost items.' }); // Send error response
