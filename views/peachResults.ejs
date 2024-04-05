@@ -98,6 +98,16 @@
             display: flex;
             align-items: center;
         }
+        .item-link {
+            padding: 10px;
+            text-align: center;
+            width: 200px;
+            height: 250px;
+            transition: transform 0.3s ease;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +148,8 @@
 
     <div class="grid-container">
         <% lostItems.forEach(item => {%>
+            <a href="/found/<%= item._id %>" class="item-link">
+
             <div class="item-box">
                 <div class="image-container">
                     <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
@@ -150,6 +162,7 @@
                     
                 </div>
             </div>
+        </a>
         <% }); %>
     </div>
     <div class="pagination">

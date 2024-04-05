@@ -30,6 +30,7 @@
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
     z-index: -1;
+    background-color: black;
 }
 
 .image-container {
@@ -71,6 +72,17 @@
     color: #fff;
 }
 
+.item-link {
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+    height: 250px;
+    transition: transform 0.3s ease;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    z-index: 1;
+}
+
     </style>
 </head>
 <body>
@@ -109,8 +121,11 @@
         </form>
     </div>
 
-    <div class="grid-container">
-        <% lostItems.forEach(item => { %>
+<!-- index.ejs -->
+<div class="grid-container">
+    <% lostItems.forEach(item => { %>
+        <a href="/lost/<%= item._id %>" class="item-link">
+
             <div class="item-box">
                 <div class="image-container">
                     <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
@@ -120,11 +135,14 @@
                     <p><strong>Place Lost:</strong> <%= item.place %></p>
                     <p><strong>User:</strong> <%= item.user_id %></p>
                     <p><strong>Date Lost:</strong> <%= item.date.toDateString() %></p>
-                    
                 </div>
+
             </div>
-        <% }); %>
-    </div>
+        </a>
+
+    <% }); %>
+</div>
+
     <div class="pagination">
         <% for (let i = 1; i <= totalPages; i++) { %>
             <a href="/lost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
