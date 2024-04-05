@@ -145,7 +145,99 @@ function isAdminAuthenticated(req, res, next) {
   }
   res.redirect('/adminLogin');
 }
+// Passport local strategy for user authentication
+// passport.use('local', new LocalStrategy(
+//   function(username, password, done) {
+//     User.findOne({ user_id: username })
+//       .then(user => {
+//         if (!user) {
+//           return done(null, false, { message: 'Incorrect username.' });
+//         }
+//         if (user.password !== password) {
+//           return done(null, false, { message: 'Incorrect password.' });
+//         }
+//         return done(null, user);
+//       })
+//       .catch(err => done(err));
+//   }
+// ));
 
+// // Serialize and deserialize user
+// passport.serializeUser(function (user, done) {
+//   done(null, user.id);
+// });
+
+// passport.deserializeUser(async function (id, done) {
+//   try {
+//     const user = await User.findById(id);
+//     done(null, user);
+//   } catch (error) {
+//     done(error, null);
+//   }
+// });
+
+
+
+// // Passport local strategy for admin authentication
+// passport.use('admin', new LocalStrategy(
+//   function(username, password, done) {
+//     Admin.findOne({ admin_id: username, password: password })
+//       .then(admin => {
+//         if (!admin) {
+//           return done(null, false, { message: 'Incorrect admin credentials.' });
+//         }
+//         return done(null, admin);
+//       })
+//       .catch(err => done(err));
+//   }
+// ));
+
+
+//new 
+
+// Serialize and deserialize user
+passport.serializeUser(function (user, done) {
+  if (user instanceof User) {
+    done(null, { id: user.id, type: 'user' }); // Serialize user with type
+  } else if (user instanceof Admin) {
+    done(null, { id: user.id, type: 'admin' }); // Serialize admin with type
+  } else {
+    done(new Error('Invalid user type during serialization'), null);
+  }
+});
+
+passport.deserializeUser(async function (serializedUser, done) {
+  try {
+    if (serializedUser.type === 'user') {
+      const user = await User.findById(serializedUser.id);
+      done(null, user);
+    } else if (serializedUser.type === 'admin') {
+      const admin = await Admin.findById(serializedUser.id);
+      done(null, admin);
+    } else {
+      done(new Error('Invalid user type during deserialization'), null);
+    }
+  } catch (error) {
+    done(error, null);
+  }
+});
+
+// Passport local strategy for user authentication
+passport.use('local', new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ user_id: username })
+      .then(user => {
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+        if (user.password !== password) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        return done(null, user);
+      })
+      .catch(err => done(err));
+  }
+));
 
 // Passport local strategy for admin authentication
 passport.use('admin', new LocalStrategy(
@@ -161,19 +253,6 @@ passport.use('admin', new LocalStrategy(
   }
 ));
 
-// Serialize and deserialize admin
-passport.serializeUser(function (admin, done) {
-  done(null, admin.id); // Assuming admin.id is the correct field for the admin's ID
-});
-
-passport.deserializeUser(async function (id, done) {
-  try {
-    const admin = await Admin.findById(id); // Assuming admin ID is stored in _id field
-    done(null, admin);
-  } catch (error) {
-    done(error, null);
-  }
-});
 
 // Routes
 app.get('/login', (req, res) => {
@@ -193,33 +272,33 @@ app.post('/login', passport.authenticate('local', {
 
 //admin
 
-passport.use('admin', new LocalStrategy(
-  function(username, password, done) {
-    Admin.findOne({ admin_id: username, password: password })
-      .then(admin => {
-        if (!admin) {
-          return done(null, false, { message: 'Incorrect admin credentials.' });
-        }
-        return done(null, admin);
-      })
-      .catch(err => done(err));
-  }
-));
+// passport.use('admin', new LocalStrategy(
+//   function(username, password, done) {
+//     Admin.findOne({ admin_id: username, password: password })
+//       .then(admin => {
+//         if (!admin) {
+//           return done(null, false, { message: 'Incorrect admin credentials.' });
+//         }
+//         return done(null, admin);
+//       })
+//       .catch(err => done(err));
+//   }
+// ));
 
-// Serialize and deserialize admin
-passport.serializeUser(function (user, done) {
-  done(null, admin.admin_id); // Assuming user.admin_id is the correct field for the admin's ID
-});
+// // Serialize and deserialize admin
+// passport.serializeUser(function (user, done) {
+//   done(null, admin.admin_id); // Assuming user.admin_id is the correct field for the admin's ID
+// });
 
 
-passport.deserializeUser(async function (id, done) {
-  try {
-    const admin = await Admin.findOne({ admin_id: id }); // Assuming admin_id is the correct field for the admin's ID
-    done(null, admin);
-  } catch (error) {
-    done(error, null);
-  }
-});
+// passport.deserializeUser(async function (id, done) {
+//   try {
+//     const admin = await Admin.findOne({ admin_id: id }); // Assuming admin_id is the correct field for the admin's ID
+//     done(null, admin);
+//   } catch (error) {
+//     done(error, null);
+//   }
+// });
 
 // Routes
 app.get('/adminLogin', (req, res) => {
