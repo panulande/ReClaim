@@ -1,0 +1,141 @@
+/* report.css */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline-block; /* Display tabs horizontally */
+    margin-right: 20px;
+  }
+  
+  nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    padding: 10px 15px; /* Add padding for better click area */
+    border-radius: 4px; /* Add border radius for better appearance */
+  }
+  
+  nav ul li a:hover {
+    background-color: #555; /* Change background color on hover */
+  }
+  
+  .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin: 20px auto; /* Center the tabs */
+    border-radius: 8px;
+    display: table; /* Make the tab container a table */
+  }
+  
+  .tab button {
+    background-color: inherit;
+    float: none; /* Remove float */
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    border-radius: 8px;
+    display: table-cell; /* Make each button a table cell */
+  }
+  
+  .tab button.active {
+    background-color: #ccc;
+  }
+  
+  .tabcontent {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: #fff;
+    height: calc(100vh - 150px); /* Adjusted height for smaller screens */
+    border-radius: 8px;
+  }
+  
+  form {
+    width: 50%;
+    margin: 0 auto;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  input[type="text"],
+  input[type="date"],
+  textarea {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+  
+  textarea {
+    height: 100px;
+  }
+  
+  input[type="file"] {
+    margin-bottom: 20px;
+  }
+  
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  @media only screen and (max-width: 700px) {
+    nav ul li {
+      display: block; /* Change tabs to display vertically on smaller screens */
+      margin-right: 0;
+      margin-bottom: 10px; /* Add margin bottom for spacing */
+    }
+  
+    nav ul li a {
+      display: block;
+      padding: 10px 0; /* Adjust padding for better spacing */
+    }
+  
+    .tab {
+      width: 100%; /* Make the tab container full width on smaller screens */
+      margin: 20px 0; /* Adjust margin for spacing */
+    }
+  }
+  

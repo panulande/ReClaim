@@ -1,0 +1,183 @@
+<!-- peachResults.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Items</title>
+    <link rel="stylesheet" href="login.css">
+    <style>
+        /* styles.css */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: 600px;
+            width: 80%;
+            position: relative;
+            left:10%;
+            padding-top: 80px;    
+        }
+
+        .item-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9; /* Light gray background color */
+            text-align: center;
+            width: 200px;
+            height: 250px;
+            transition: transform 0.3s ease;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            z-index: -1;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 60%;
+            overflow: hidden;
+            padding-bottom: 40px;
+
+        }
+
+        .item-image {
+            width: auto; /* Adjust the width of the image */
+            height: 100%;
+            display: block;
+            margin: 0 auto; /* Center the image horizontally */
+
+        }
+
+        .details-container {
+            font-size: 14px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 5px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .pagination a.active {
+            background-color: #333;
+            color: #fff;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        /* Style for search button */
+        #searchButton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Style for search container */
+        .search-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">ReClaim</div>
+        <input type="checkbox" id="nav_check" hidden>
+        <nav>
+            <ul>
+                <li>
+                    <a href="/dashboard">Home</a>
+                </li>
+                <li>
+                    <a href="lost" class="active">Lost</a>
+                </li>
+                <li>
+                    <a href="found">Found</a>
+                </li>
+                <li>
+                    <a href="profile">Profile</a>
+                </li>
+                <li>
+                    <a href="login">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <label for="nav_check" class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </label>
+    </header>
+    <div class="search-container">
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="grid-container">
+        <% lostItems.forEach(item => {%>
+            <div class="item-box">
+                <div class="image-container">
+                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
+                </div>
+                <div class="details-container">
+                    <p><strong>Name:</strong> <%= item.itemName %></p>
+                    <p><strong>Place Lost:</strong> <%= item.place %></p>
+                    <p><strong>User:</strong> <%= item.user_id %></p>
+                    <p><strong>Date Lost:</strong> <%= item.date.toDateString() %></p>
+                    
+                </div>
+            </div>
+        <% }); %>
+    </div>
+    <div class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/lost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+    </div>
+    <!-- JavaScript to handle form submission for searching -->
+    <script>
+        document.getElementById('searchInput').addEventListener('keydown', async function(event) {
+            // Check if the pressed key is Enter (key code 13)
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default behavior of the Enter key
+                const searchQuery = this.value; // Get the search query
+                // Redirect to the search page with the search query
+                window.location.href = `/SearchLost?query=${encodeURIComponent(searchQuery)}`;
+            }
+        });
+    
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            const searchQuery = document.getElementById('searchInput').value; // Get the search query
+            // Redirect to the search page with the search query
+            window.location.href = `/searchLost?query=${encodeURIComponent(searchQuery)}`;
+        });
+    </script>
+    
+
+
+</body>
+</html>

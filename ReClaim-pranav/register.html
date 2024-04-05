@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <title>Responsive Navbar using HTML & CSS</title>
+</head>
+<body>
+    <header>
+        <div class="logo">ReClaim</div>
+        <input type="checkbox" id="nav_check" hidden>
+        <nav>
+            <ul>
+                <li>
+                    <a href="login" >Login</a>
+                </li>
+                <li>
+                    <a href="register" class="active">Sign Up</a>
+                </li>
+            </ul>
+        </nav>
+        <label for="nav_check" class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </label>
+    </header>
+    <main>
+        <div class="center">
+            <h1>Sign Up</h1>
+            <form method="post" action="/register"> <!-- Added action attribute with the registration route -->
+                <div class="txt_field">
+                    <input type="text" name="name" required> <!-- Added name attribute -->
+                    <span></span>
+                    <label>Full Name</label>
+                </div>
+                <div class="txt_field">
+                    <input type="text" name="email" required> <!-- Added name attribute -->
+                    <span></span>
+                    <label>Email</label>
+                </div>
+                <div class="txt_field">
+                    <input type="text" name="dob" required> <!-- Added name attribute -->
+                    <span></span>
+                    <label>Date of Birth</label>
+                </div>
+                <div class="txt_field">
+                    <input type="text" name="username" required> <!-- Added name attribute -->
+                    <span></span>
+                    <label>Username</label>
+                </div>
+                <div class="txt_field">
+                    <input type="password" name="password" required> <!-- Added name attribute -->
+                    <span></span>
+                    <label>Password</label>
+                </div>
+                <input type="submit" value="Sign Up">
+                <div class="signup_link">
+                    Already a member? <a href="login">Login</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <title>ReClaim - Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .img {
+            width: 400px;
+            height: 364px;
+            position: absolute;
+            left: 14%;
+            top:20.5%;
+            border-radius: 8px;
+            
+        }
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        .center {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 45%;
+            left: 55%;
+           
+            
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">ReClaim</div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="login" class="active">Login</a>
+                </li>
+                <li>
+                    <a href="register">Sign Up</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="img">
+            <img src="./images/bg-image.png" alt="">
+        </div>
+        <div class="center">
+            <h1>Login</h1>
+            <form action="/login" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+              
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+              
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

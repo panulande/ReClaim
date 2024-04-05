@@ -1,0 +1,64 @@
+/* profile.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container h2 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    color: #555555;
+    margin-bottom: 10px;
+  }
+  
+  .form-group input[type="text"] {
+    width: calc(100% - 24px);
+    padding: 15px;
+    border: 2px solid #dddddd;
+    border-radius: 25px;
+    background-color: #f2f2f2;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-group input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .form-group .update-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .form-group .update-btn:hover {
+    background-color: #0056b3;
+  }
+  
