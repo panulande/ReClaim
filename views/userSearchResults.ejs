@@ -1,10 +1,9 @@
-<!-- peachResults.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Items</title>
+    <title>Found Items</title>
     <link rel="stylesheet" href="login.css">
     <style>
         /* styles.css */
@@ -120,10 +119,10 @@
                     <a href="/dashboard">Home</a>
                 </li>
                 <li>
-                    <a href="lost" class="active">Lost</a>
+                    <a href="lost">Lost</a>
                 </li>
                 <li>
-                    <a href="found">Found</a>
+                    <a href="found" class="active">Found</a>
                 </li>
                 <li>
                     <a href="profile">Profile</a>
@@ -147,18 +146,18 @@
     </div>
 
     <div class="grid-container">
-        <% userLostItems.forEach(item => {%>
-            <!-- <a href="/userLostItems/<%= item._id %>" class="item-link"> -->
+        <% userFoundItems.forEach(item => {%>
+            <!-- <a href="/userFoundItems/<%= item._id %>" class="item-link"> -->
 
             <div class="item-box">
                 <div class="image-container">
-                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
+                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Found Item Photo">
                 </div>
                 <div class="details-container">
                     <p><strong>Name:</strong> <%= item.itemName %></p>
-                    <p><strong>Place Lost:</strong> <%= item.place %></p>
+                    <p><strong>Place Found:</strong> <%= item.place %></p>
                     <p><strong>User:</strong> <%= item.user_id %></p>
-                    <p><strong>Date Lost:</strong> <%= item.date.toDateString() %></p>
+                    <p><strong>Date Found:</strong> <%= item.date.toDateString() %></p>
                     
                 </div>
             </div>
@@ -167,7 +166,7 @@
     </div>
     <div class="pagination">
         <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="/userLost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+            <a href="/userSearchFound?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
         <% } %>
     </div>
     <!-- JavaScript to handle form submission for searching -->
@@ -178,7 +177,7 @@
                 event.preventDefault(); // Prevent the default behavior of the Enter key
                 const searchQuery = this.value; // Get the search query
                 // Redirect to the search page with the search query
-                window.location.href = `/userSearchLost?query=${encodeURIComponent(searchQuery)}`;
+                window.location.href = `/userSearchFound?query=${encodeURIComponent(searchQuery)}`;
             }
         });
     
@@ -186,11 +185,8 @@
             event.preventDefault(); // Prevent the default form submission behavior
             const searchQuery = document.getElementById('searchInput').value; // Get the search query
             // Redirect to the search page with the search query
-            window.location.href = `/userSearchLost?query=${encodeURIComponent(searchQuery)}`;
+            window.location.href = `/userSearchFound?query=${encodeURIComponent(searchQuery)}`;
         });
     </script>
-    
-
-
 </body>
 </html>

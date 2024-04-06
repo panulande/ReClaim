@@ -1,10 +1,10 @@
-<!-- index.ejs -->
+<!-- found.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Items</title>
+    <title>Found Items</title>
     <link rel="stylesheet" href="login.css">
     <style>
         /* styles.css */
@@ -70,7 +70,33 @@
     background-color: #333;
     color: #fff;
 }
+#searchInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 300px;
+    margin-right: 10px;
+}
 
+/* Style for search button */
+#searchButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Style for search container */
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
 .item-link {
     padding: 10px;
     text-align: center;
@@ -81,6 +107,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
     z-index: 1;
 }
+
 
     </style>
 </head>
@@ -94,10 +121,10 @@
                     <a href="/dashboard">Home</a>
                 </li>
                 <li>
-                    <a href="lost" class="active"></a>Lost</a>
+                    <a href="lost">Lost</a>
                 </li>
                 <li>
-                    <a href="found">Found</a>
+                    <a href="found" class="active"></a>Found</a>
                 </li>
                 <li>
                     <a href="profile">Profile</a>
@@ -120,50 +147,51 @@
         </form>
     </div>
 
-<!-- index.ejs -->
-<div class="grid-container">
-    <% userLostItems.forEach(item => { %>
-        <!-- <a href="/lost/<%= item._id %>" class="item-link"> -->
+
+    <div class="grid-container">
+        <% userFoundItems.forEach(item => { %>
+            <a href="/found/<%= item._id %>" class="item-link">
 
             <div class="item-box">
                 <div class="image-container">
-                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Lost Item Photo">
+                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Found Item Photo">
                 </div>
                 <div class="details-container">
                     <p><strong>Name:</strong> <%= item.itemName %></p>
-                    <p><strong>Place Lost:</strong> <%= item.place %></p>
+                    <p><strong>Place Found:</strong> <%= item.place %></p>
                     <p><strong>User:</strong> <%= item.user_id %></p>
-                    <p><strong>Date Lost:</strong> <%= item.date.toDateString() %></p>
+                    <p><strong>Date Found:</strong> <%= item.date.toDateString() %></p>
+                    
                 </div>
-
             </div>
-        <!-- </a> -->
-
-    <% }); %>
-</div>
-
+            </a>
+        <% }); %>
+    </div>
     <div class="pagination">
+
         <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="/userLost?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+            <a href="/userFound?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
         <% } %>
     </div>
-    <script>
-        document.getElementById('searchInput').addEventListener('keydown', async function(event) {
-            // Check if the pressed key is Enter (key code 13)
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent the default behavior of the Enter key
-                const searchQuery = this.value; // Get the search query
-                // Redirect to the search page with the search query
-                window.location.href = `/userSearchLost?query=${encodeURIComponent(searchQuery)}`;
-            }
-        });
-    
-        document.getElementById('searchForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-            const searchQuery = document.getElementById('searchInput').value; // Get the search query
+    <!-- JavaScript to handle form submission for searching -->
+<script>
+    document.getElementById('searchInput').addEventListener('keydown', async function(event) {
+        // Check if the pressed key is Enter (key code 13)
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default behavior of the Enter key
+            const searchQuery = this.value; // Get the search query
             // Redirect to the search page with the search query
-            window.location.href = `/userSearchLost?query=${encodeURIComponent(searchQuery)}`;
-        });
-    </script>
+            window.location.href = `/userSearchFound?query=${encodeURIComponent(searchQuery)}`;
+        }
+    });
+
+    document.getElementById('searchForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        const searchQuery = document.getElementById('searchInput').value; // Get the search query
+        // Redirect to the search page with the search query
+        window.location.href = `/userSearchFound?query=${encodeURIComponent(searchQuery)}`;
+    });
+</script>
+
 </body>
 </html>

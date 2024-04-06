@@ -558,6 +558,24 @@ app.get('/lost/:id', async (req, res) => {
   }
 });
 
+app.get('/found/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const foundItem = await FoundItem.findById(itemId);
+
+    if (!foundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the details page template and pass the item details to it
+    res.render('foundItemDetails', { foundItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 app.post('/lost/:id/uploaded', async (req, res) => {
   try {
@@ -597,43 +615,68 @@ app.post('/lost/:id/verified', async (req, res) => {
   }
 });
 
-app.get('/userLost', isAuthenticated, async (req, res) => {
+app.post('/found/:id/uploaded', async (req, res) => {
   try {
-    const uploadedLostItems = await LostItem.find({ status: 'uploaded', user_id: req.user.user_id });
+    const itemId = req.params.id;
 
-    const totalPages = Math.ceil(uploadedLostItems.length / itemsPerPage);
-    const currentPage = parseInt(req.query.page) || 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage - 1, uploadedLostItems.length - 1);
-    const currentUserLostItems = uploadedLostItems.slice(startIndex, endIndex + 1);
+    // Update the status of the found item to 'uploaded'
+    const updatedFoundItem = await FoundItem.findByIdAndUpdate(itemId, { status: 'uploaded' }, { new: true });
 
-    // Render the userLost.ejs template with the found items data
-    res.render('userLost', { userLostItems: currentUserLostItems, currentPage, totalPages, itemsPerPage });
+    if (!updatedFoundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    res.status(200).send('Found item status updated to "uploaded" successfully');
   } catch (error) {
-    console.error('Error fetching user uploaded lost items:', error);
-    res.status(500).send('An error occurred while fetching user uploaded lost items.');
+    console.error('Error updating found item status:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
-app.get('/userFound', isAuthenticated, async (req, res) => {
+// Handle POST request to mark a found item as verified
+app.post('/found/:id/verified', async (req, res) => {
   try {
-    // Find all found items with status 'uploaded' for the authenticated user
-    const uploadedFoundItems = await FoundItem.find({ status: 'uploaded', user_id: req.user.user_id });
+    const itemId = req.params.id;
 
-    // Paginate the results if needed
-    const totalPages = Math.ceil(uploadedFoundItems.length / itemsPerPage);
-    const currentPage = parseInt(req.query.page) || 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage - 1, uploadedFoundItems.length - 1);
-    const currentUserFoundItems = uploadedFoundItems.slice(startIndex, endIndex + 1);
+    // Update the status of the found item to 'verified'
+    const updatedFoundItem = await FoundItem.findByIdAndUpdate(itemId, { status: 'verified' }, { new: true });
 
-    // Render the userFound.ejs template with the found items data
-    res.render('userFound', { userFoundItems: currentUserFoundItems, currentPage, totalPages, itemsPerPage });
+    if (!updatedFoundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    res.status(200).send('Found item status updated to "verified" successfully');
   } catch (error) {
-    console.error('Error fetching user uploaded found items:', error);
-    res.status(500).send('An error occurred while fetching user uploaded found items.');
+    console.error('Error updating found item status:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
+
+
+app.get('/userFound', async (req, res) => {
+  try {
+      // Fetch all found items with status 'uploaded'
+      const foundItems = await FoundItem.find({ status: 'uploaded' });
+
+      // Pagination logic
+      const itemsPerPage = 6;
+      const totalPages = Math.ceil(foundItems.length / itemsPerPage);
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, foundItems.length - 1);
+      const currentFoundItems = foundItems.slice(startIndex, endIndex + 1);
+
+      // Render the template with found items
+      res.render('userFound', { userFoundItems: currentFoundItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+      console.error('Error fetching user found items:', error);
+      res.status(500).send('An error occurred while fetching user found items.');
+  }
+});
+
+
 
 app.get('/userSearchLost', async (req, res) => {
   try {
@@ -648,7 +691,7 @@ app.get('/userSearchLost', async (req, res) => {
                   { $multiply: [{ $strLenCP: searchQuery }, 0.5] } // 50% of the length of the search query
               ]
           },
-          status: { $ne: 'uploaded' } // Exclude items with status 'uploaded'
+          status: 'uploaded' // Include only items with status 'uploaded'
       });
 
       // Pagination logic
@@ -667,10 +710,41 @@ app.get('/userSearchLost', async (req, res) => {
   }
 });
 
+app.get('/userSearchFound', async (req, res) => {
+  try {
+    const searchQuery = req.query.query; // Get the search query from the request
+
+    // Perform a database query to search for found items with at least 50% match and status 'uploaded'
+    const searchResults = await FoundItem.find({
+      itemName: { $regex: searchQuery, $options: 'i' }, // Case-insensitive match for itemName
+      $expr: {
+        $gte: [
+          { $strLenCP: "$itemName" }, // Length of itemName
+          { $multiply: [{ $strLenCP: searchQuery }, 0.5] } // 50% of the length of the search query
+        ]
+      },
+      status: 'uploaded' // Include only items with status 'uploaded'
+    });
+
+    // Pagination logic
+    const itemsPerPage = 6; // Number of items per page
+    const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, searchResults.length - 1);
+    const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
+
+    // Render the template with search results for found items
+    res.render('userSearchResults', { userFoundItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+    console.error('Error searching found items:', error);
+    res.status(500).json({ error: 'An error occurred while searching found items.' }); // Send error response
+  }
+});
+
 
 
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
