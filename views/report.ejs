@@ -7,186 +7,217 @@
     <link rel="stylesheet" href="report.css">
 
     <style>
-        /* Style the tab */
-            .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-            }
+        /* Reset default margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            /* Style the buttons that are used to open the tab content */
-            .tab button {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav ul li a.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* Tab styles */
+        .tab {
+            overflow: hidden;
+            background-color: #ddd;
+            text-align: center;
+        }
+
+        .tab button {
             background-color: inherit;
-            float: left;
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            }
-
-            /* Change background color of buttons on hover */
-            .tab button:hover {
-            background-color: #ddd;
-            }
-
-            /* Create an active/current tablink class */
-            .tab button.active {
-            background-color: #ccc;
-            }
-
-            /* Style the tab content */
-            .tabcontent {
-            display: none;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            border-top: none;
-            height: 100vh;
-            
-}
-form {
-            width: 50%;
-            margin: 0 auto;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
         }
+
+        .tab button:hover {
+            background-color: #ccc;
+        }
+
+        .tab button.active {
+            background-color: #fff;
+        }
+
+        /* Tab content styles */
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Form styles */
+        form {
+            width: 50%;
+            margin: 20px auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
+
         input[type="text"],
+        input[type="date"],
         textarea {
-            width: 100%;
+            width: calc(100% - 22px);
             padding: 8px;
             margin-bottom: 10px;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
+
         textarea {
+            resize: vertical;
             height: 100px;
         }
+
         input[type="file"] {
             margin-bottom: 20px;
         }
+
         input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #007bff;
+            color: #fff;
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            float: right;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">ReClaim</div>
-        <input type="checkbox" id="nav_check" hidden>
         <nav>
             <ul>
-                <li>
-                    <a href="dashboard" class="active">Home</a>
-                </li>
-                <li>
-                    <a href="aboutus">About Us</a>
-                </li>
-                <li>
-                    <a href="Contactus">Contact Us</a>
-                </li>
-                <li>
-                    <a href="profile">Profile</a>
-                </li>
-                <li>
-                    <a href="login">Logout</a>
-                </li>
+                <li><a href="dashboard" class="active">Home</a></li>
+                <li><a href="aboutus">About Us</a></li>
+                <li><a href="Contactus">Contact Us</a></li>
+                <li><a href="profile">Profile</a></li>
+                <li><a href="login">Logout</a></li>
             </ul>
         </nav>
-        <label for="nav_check" class="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </label>
     </header>
+
     <div class="tab">
         <button class="tablinks" onclick="openCity(event, 'London')">Report Lost Items</button>
         <button class="tablinks" onclick="openCity(event, 'Paris')">Report Found Items</button>
-      </div>
-      
-      <!-- Tab content -->
-      <div id="London" class="tabcontent">
+    </div>
+
+    <!-- Tab content -->
+    <div id="London" class="tabcontent">
         <form action="/submit-lost" method="POST" enctype="multipart/form-data">
             <label for="itemName">Item Name:</label>
             <input type="text" id="itemName" name="itemName" required>
-    
+
             <label for="date">Date:</label>
             <input type="date" id="date" name="date" required>
-    
+
             <label for="place">Place:</label>
             <input type="text" id="place" name="place" required>
-    
+
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
-    
+
             <label for="photo">Photo:</label>
             <input type="file" id="photo" name="photo" accept="image/*">
-    
+
             <label for="document">Document:</label>
             <input type="file" id="document" name="document" accept=".pdf,.doc,.docx">
-    
+
             <input type="submit" value="Submit">
         </form>
-      </div>
-      
-      <div id="Paris" class="tabcontent">
+    </div>
+
+    <div id="Paris" class="tabcontent">
         <form action="/submit-found" method="POST" enctype="multipart/form-data">
             <label for="itemName">Item Name:</label>
             <input type="text" id="itemName" name="itemName" required>
-    
+
             <label for="date">Date:</label>
             <input type="date" id="date" name="date" required>
-    
+
             <label for="place">Place:</label>
             <input type="text" id="place" name="place" required>
-    
+
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
-    
+
             <label for="photo">Photo:</label>
             <input type="file" id="photo" name="photo" accept="image/*">
-    
 
-    
             <input type="submit" value="Submit">
         </form>
-      </div>
-      
-      <div id="Tokyo" class="tabcontent">
-        
-    
-      </div>
+    </div>
 
     <script>
         function openCity(evt, cityName) {
-  // Declare all variables
-        var i, tabcontent, tablinks;
-
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
         }
-
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(cityName).style.display = "block";
-        evt.currentTarget.className += " active";
-}
     </script>
 </body>
 </html>

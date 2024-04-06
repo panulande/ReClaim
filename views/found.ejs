@@ -117,28 +117,31 @@
         </form>
     </div>
 
-
     <div class="grid-container">
-        <% foundItems.forEach(item => { %>
+        <% for (let i = 0; i < foundItems.length; i++) { %>
             <div class="item-box">
                 <div class="image-container">
-                    <img class="item-image" src="data:image/jpeg;base64,<%= item.photo.toString('base64') %>" alt="Found Item Photo">
+                    <img class="item-image" src="data:image/jpeg;base64,<%= foundItems[i].photo.toString('base64') %>" alt="Found Item Photo">
                 </div>
                 <div class="details-container">
-                    <p><strong>Name:</strong> <%= item.itemName %></p>
-                    <p><strong>Place Found:</strong> <%= item.place %></p>
-                    <p><strong>User:</strong> <%= item.user_id %></p>
-                    <p><strong>Date Found:</strong> <%= item.date.toDateString() %></p>
-                    
+                    <p><strong>Name:</strong> <%= foundItems[i].itemName %></p>
+                    <p><strong>Place Found:</strong> <%= foundItems[i].place %></p>
+                    <p><strong>User:</strong> <%= foundItems[i].user_id %></p>
+                    <p><strong>Date Found:</strong> <%= foundItems[i].date.toDateString() %></p>
                 </div>
             </div>
-        <% }); %>
+            <% if ((i + 1) % 6 === 0) { %>
+                </div><div class="grid-container">
+            <% } %>
+        <% } %>
     </div>
+
     <div class="pagination">
         <% for (let i = 1; i <= totalPages; i++) { %>
             <a href="/found?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
         <% } %>
     </div>
+
     <!-- JavaScript to handle form submission for searching -->
 <script>
     document.getElementById('searchInput').addEventListener('keydown', async function(event) {
