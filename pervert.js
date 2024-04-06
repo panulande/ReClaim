@@ -507,7 +507,7 @@ app.get('/searchFound', async (req, res) => {
   }
 });
 
-// Route for searching lost items
+
 app.get('/searchLost', async (req, res) => {
   try {
       const searchQuery = req.query.query; // Get the search query from the request
@@ -597,7 +597,75 @@ app.post('/lost/:id/verified', async (req, res) => {
   }
 });
 
+app.get('/userLost', isAuthenticated, async (req, res) => {
+  try {
+    const uploadedLostItems = await LostItem.find({ status: 'uploaded', user_id: req.user.user_id });
 
+    const totalPages = Math.ceil(uploadedLostItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, uploadedLostItems.length - 1);
+    const currentUserLostItems = uploadedLostItems.slice(startIndex, endIndex + 1);
+
+    // Render the userLost.ejs template with the found items data
+    res.render('userLost', { userLostItems: currentUserLostItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+    console.error('Error fetching user uploaded lost items:', error);
+    res.status(500).send('An error occurred while fetching user uploaded lost items.');
+  }
+});
+
+app.get('/userFound', isAuthenticated, async (req, res) => {
+  try {
+    // Find all found items with status 'uploaded' for the authenticated user
+    const uploadedFoundItems = await FoundItem.find({ status: 'uploaded', user_id: req.user.user_id });
+
+    // Paginate the results if needed
+    const totalPages = Math.ceil(uploadedFoundItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, uploadedFoundItems.length - 1);
+    const currentUserFoundItems = uploadedFoundItems.slice(startIndex, endIndex + 1);
+
+    // Render the userFound.ejs template with the found items data
+    res.render('userFound', { userFoundItems: currentUserFoundItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+    console.error('Error fetching user uploaded found items:', error);
+    res.status(500).send('An error occurred while fetching user uploaded found items.');
+  }
+});
+
+app.get('/userSearchLost', async (req, res) => {
+  try {
+      const searchQuery = req.query.query; // Get the search query from the request
+
+      // Perform a database query to search for lost items with at least 50% match
+      const searchResults = await LostItem.find({
+          itemName: { $regex: searchQuery, $options: 'i' }, // Case-insensitive match for itemName
+          $expr: {
+              $gte: [
+                  { $strLenCP: "$itemName" }, // Length of itemName
+                  { $multiply: [{ $strLenCP: searchQuery }, 0.5] } // 50% of the length of the search query
+              ]
+          },
+          status: { $ne: 'uploaded' } // Exclude items with status 'uploaded'
+      });
+
+      // Pagination logic
+      const itemsPerPage = 6; // Number of items per page
+      const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, searchResults.length - 1);
+      const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
+
+      // Render the template with search results for lost items
+      res.render('userPeachResults', { userLostItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+      console.error('Error searching lost items:', error);
+      res.status(500).json({ error: 'An error occurred while searching lost items.' }); // Send error response
+  }
+});
 
 
 
