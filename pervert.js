@@ -476,9 +476,6 @@ app.get('/found', isAdminAuthenticated, async (req, res) => {
 });
 
 
-// Backend route to handle search requests
-// Backend route to handle search requests
-// Route for searching found items
 app.get('/searchFound', async (req, res) => {
   try {
       const searchQuery = req.query.query; // Get the search query from the request
@@ -541,6 +538,65 @@ app.get('/searchLost', async (req, res) => {
       res.status(500).json({ error: 'An error occurred while searching lost items.' }); // Send error response
   }
 });
+
+// Route to display details of a specific lost item
+app.get('/lost/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const lostItem = await LostItem.findById(itemId);
+
+    if (!lostItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the details page template and pass the item details to it
+    res.render('lostItemDetails', { lostItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+app.post('/lost/:id/uploaded', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+
+    // Update the status of the lost item to 'uploaded'
+    const updatedLostItem = await LostItem.findByIdAndUpdate(itemId, { status: 'uploaded' }, { new: true });
+
+    if (!updatedLostItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    res.status(200).send('Lost item status updated to "uploaded" successfully');
+  } catch (error) {
+    console.error('Error updating lost item status:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+// Handle POST request to mark a lost item as verified
+app.post('/lost/:id/verified', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+
+    // Update the status of the lost item to 'verified'
+    const updatedLostItem = await LostItem.findByIdAndUpdate(itemId, { status: 'verified' }, { new: true });
+
+    if (!updatedLostItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    res.status(200).send('Lost item status updated to "verified" successfully');
+  } catch (error) {
+    console.error('Error updating lost item status:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 
 
