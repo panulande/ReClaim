@@ -654,6 +654,26 @@ app.post('/found/:id/verified', async (req, res) => {
   }
 });
 
+app.get('/userLost', async (req, res) => {
+  try {
+    // Fetch all lost items with status 'uploaded'
+    const lostItems = await LostItem.find({ status: 'uploaded' });
+
+    // Pagination logic
+    const itemsPerPage = 6;
+    const totalPages = Math.ceil(lostItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, lostItems.length - 1);
+    const currentLostItems = lostItems.slice(startIndex, endIndex + 1);
+
+    // Render the template with lost items
+    res.render('userLost', { userLostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+    console.error('Error fetching user lost items:', error);
+    res.status(500).send('An error occurred while fetching user lost items.');
+  }
+});
 
 app.get('/userFound', async (req, res) => {
   try {
@@ -742,9 +762,77 @@ app.get('/userSearchFound', async (req, res) => {
   }
 });
 
+app.get('/userLost/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const lostItem = await LostItem.findById(itemId);
 
+    if (!lostItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
 
+    // Render the details page template and pass the item details to it
+    res.render('userLostItemDetails', { lostItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
+app.get('/userFound/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const foundItem = await FoundItem.findById(itemId);
+
+    if (!foundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the details page template and pass the item details to it
+    res.render('userFoundItemDetails', { foundItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/userSearchFound/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const foundItem = await FoundItem.findById(itemId);
+
+    if (!foundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the details page template and pass the item details to it
+    res.render('userFoundItemDetails', { foundItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/userSearchLost/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const lostItem = await LostItem.findById(itemId);
+
+    if (!lostItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the details page template and pass the item details to it
+    res.render('userLostItemDetails', { lostItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

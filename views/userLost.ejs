@@ -123,7 +123,7 @@
 <!-- index.ejs -->
 <div class="grid-container">
     <% userLostItems.forEach(item => { %>
-        <!-- <a href="/lost/<%= item._id %>" class="item-link"> -->
+        <a href="/userLost/<%= item._id %>" class="item-link">
 
             <div class="item-box">
                 <div class="image-container">
@@ -137,7 +137,7 @@
                 </div>
 
             </div>
-        <!-- </a> -->
+        </a>
 
     <% }); %>
 </div>

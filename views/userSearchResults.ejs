@@ -147,7 +147,7 @@
 
     <div class="grid-container">
         <% userFoundItems.forEach(item => {%>
-            <!-- <a href="/userFoundItems/<%= item._id %>" class="item-link"> -->
+            <a href="/userSearchFound/<%= item._id %>" class="item-link">
 
             <div class="item-box">
                 <div class="image-container">
@@ -161,7 +161,7 @@
                     
                 </div>
             </div>
-        <!-- </a> -->
+        </a>
         <% }); %>
     </div>
     <div class="pagination">
