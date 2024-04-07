@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claimed Item Form</title>
+</head>
+<body>
+<h2>Claimed Item Form</h2>
+<form id="claimedItemForm" enctype="multipart/form-data" action="/userFound/<%= foundItem._id %>/claim-submit" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+    
+    <label for="placeLost">Place Lost:</label>
+    <input type="text" id="placeLost" name="placeLost" required><br><br>
+    
+    <label for="dateLost">Date Lost:</label>
+    <input type="date" id="dateLost" name="dateLost" required><br><br>
+    
+    <label for="document">Document:</label>
+    <input type="file" id="document" name="document" accept=".pdf,.doc,.docx" required><br><br>
+    
+    <label for="photo">Photo (Optional):</label>
+    <input type="file" id="photo" name="photo" accept="image/*"><br><br>
+    
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

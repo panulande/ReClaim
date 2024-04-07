@@ -73,6 +73,8 @@ const lostItemSchema = new mongoose.Schema({
 });
 
 
+
+
 lostItemSchema.pre('save', async function(next) {
   try {
     // Check if user ID is available in session details
@@ -98,12 +100,25 @@ const foundItemSchema = new mongoose.Schema({
 });
 
 
+const claimedItemSchema = new mongoose.Schema({
+  user_id: { type: String, required: true }, // User ID
+  name: { type: String, required: true }, // Name
+  placeLost: { type: String, required: true }, // Place lost
+  dateLost: { type: Date, required: true }, // Date lost
+  document: { type: Buffer, required: true }, // Document
+  photo: { type: Buffer }, // Optional photo
+  found_item_id: { type: mongoose.Schema.Types.ObjectId, required: true } // Found item ID
+});
+
+
 
 // Create User model
 const User = mongoose.model('users', userSchema);
 const Admin = mongoose.model('admins', adminSchema);
 const LostItem = mongoose.model('lost_items', lostItemSchema);
 const FoundItem = mongoose.model('found_items', foundItemSchema);
+const ClaimedItem = mongoose.model('claimed_items', claimedItemSchema);
+
 
 
 // const storage = multer.diskStorage({
@@ -833,6 +848,74 @@ app.get('/userSearchLost/:id', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.get('/userFound/:id/claim', async (req, res) => {
+  try {
+    const foundItemId = req.params.id;
+    const foundItem = await FoundItem.findById(foundItemId);
+    console.log(foundItemId);
+
+    if (!foundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Render the claim form template and pass the found item details to it
+    res.render('claimForm', { foundItem });
+  } catch (error) {
+    console.error('Error fetching item details:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.post('/userFound/:id/claim-submit', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'document', maxCount: 1 }]), async (req, res) => {
+  try {
+    const foundItemId = req.params.id;
+    const foundItem = await FoundItem.findById(foundItemId);
+
+    if (!foundItem) {
+      // Item not found in the database
+      return res.status(404).send('Item not found');
+    }
+
+    // Extract data from the request body
+    const { name, placeLost, dateLost } = req.body;
+    const photo = req.files['photo'][0].buffer; // Get file data from memory
+    const document = req.files['document'][0].buffer; // Get file data from memory
+
+    // Assuming username is available in req.user.username
+    const user_id = req.user.user_id;
+    console.log(user_id);
+
+    // Create a new claimed item with the extracted data
+    const newClaimedItem = new ClaimedItem({
+      user_id,
+      name,
+      placeLost,
+      dateLost,
+      document: photo,
+      photo: document,
+      found_item_id: foundItemId // Include the found item ID
+    });
+
+    // Save the new claimed item to the database
+    await newClaimedItem.save();
+
+    // Optionally, you can remove the found item from the database if needed
+    // await foundItem.remove();
+
+    // Redirect the user or send a success response
+    res.status(200).send('Claimed item submitted successfully!');
+  } catch (error) {
+    console.error('Error submitting claimed item:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
