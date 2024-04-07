@@ -12,6 +12,10 @@ const path = require('path');
 const Grid = require('gridfs-stream');
 const { GridFSBucket } = require('mongodb');
 const itemsPerPage = 6;
+const fs = require('fs');
+const https = require('https');
+
+
 
 
 
@@ -110,6 +114,15 @@ const claimedItemSchema = new mongoose.Schema({
   found_item_id: { type: mongoose.Schema.Types.ObjectId, required: true } // Found item ID
 });
 
+const feedbackSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  message: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  viewed: { type: String, default: "no" } // Added field for viewed status with default value "no"
+});
+
+
 
 
 // Create User model
@@ -118,6 +131,8 @@ const Admin = mongoose.model('admins', adminSchema);
 const LostItem = mongoose.model('lost_items', lostItemSchema);
 const FoundItem = mongoose.model('found_items', foundItemSchema);
 const ClaimedItem = mongoose.model('claimed_items', claimedItemSchema);
+const Feedback = mongoose.model('feedback', feedbackSchema);
+
 
 
 
@@ -909,6 +924,171 @@ app.post('/userFound/:id/claim-submit', upload.fields([{ name: 'photo', maxCount
   } catch (error) {
     console.error('Error submitting claimed item:', error);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route for accessing claimed items
+app.get('/claimed', async (req, res) => {
+  try {
+    // Find all distinct item IDs from the ClaimedItem collection
+    const distinctItemIds = await ClaimedItem.distinct('found_item_id');
+
+    // If no distinct item IDs are found, send a 404 response
+    if (!distinctItemIds || distinctItemIds.length === 0) {
+      return res.status(404).send("No claimed items found.");
+    }
+
+    // Calculate total number of pages based on the number of distinct item IDs
+    const totalPages = Math.ceil(distinctItemIds.length / itemsPerPage);
+
+    // Parse the current page number from the request query, default to page 1
+    const currentPage = parseInt(req.query.page) || 1;
+
+    // Calculate the start and end indices of the item IDs to be fetched for the current page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, distinctItemIds.length - 1);
+
+    // Extract the item IDs to be fetched for the current page
+    const currentPageItemIds = distinctItemIds.slice(startIndex, endIndex + 1);
+
+    // Fetch the details of each distinct item from the FoundItem collection
+    const itemsDataPromises = currentPageItemIds.map(async (itemId) => {
+      const foundItem = await FoundItem.findById(itemId);
+      const claimedItem = await ClaimedItem.find({ found_item_id: itemId });
+      return {
+        item: foundItem.toObject(),
+        claims: claimedItem.map(item => item.toObject())
+      };
+    });
+
+    // Resolve all promises and render the claimed.ejs file with the data and pagination details
+    const itemsData = await Promise.all(itemsDataPromises);
+    res.render('claimed', { items: itemsData, currentPage, totalPages, itemsPerPage });
+  } catch (err) {
+    console.error("Error fetching claimed items:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get('/claimed/:id', async (req, res) => {
+  try {
+      const foundItemId = req.params.id;
+
+      // Fetch the claims associated with the specified found item ID
+      const claims = await ClaimedItem.find({ found_item_id: foundItemId });
+
+      // Render the claimedDetails.ejs view and pass the claims data to it
+      res.render('claimedDetails', { claims });
+  } catch (error) {
+      console.error('Error fetching claims:', error);
+      res.status(500).send('An error occurred while fetching claims.');
+  }
+});
+// Define a route for downloading documents
+// Define a route for downloading claimed item documents
+// Handle document download
+
+
+app.get('/download/document/:id', async (req, res) => {
+  try {
+    // Fetch the claimed item by its ID
+    const claimedItem = await ClaimedItem.findById(req.params.id);
+
+    if (!claimedItem) {
+      // If the claimed item is not found, send a 404 response
+      return res.status(404).send('Claimed item not found');
+    }
+
+    // Extract the URL from the claimed item data
+    const documentUrl = claimedItem.documentUrl;
+
+    // Make a GET request to download the document from the URL
+    https.get(documentUrl, (response) => {
+      const data = [];
+
+      response.on('data', (chunk) => {
+        data.push(chunk);
+      }).on('end', () => {
+        // Concatenate all received chunks into a single buffer
+        const documentBuffer = Buffer.concat(data);
+
+        // Set headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="document.pdf"`);
+
+        // Send the document buffer as the response
+        res.send(documentBuffer);
+      });
+    }).on('error', (err) => {
+      console.log('Download error:', err);
+      res.status(500).send('Download error: ' + err.message); // Log the error message
+    });
+  } catch (error) {
+    console.error('Error downloading document:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/feedback', isAuthenticated, (req, res) => {
+  res.render('feedback');
+});
+
+app.post('/submit-feedback', isAuthenticated, async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    const newFeedback = new Feedback({
+      name,
+      email,
+      message
+    });
+
+    // Save the feedback to the database
+    await newFeedback.save();
+
+    // Send a success response
+    res.status(200).send('Feedback submitted successfully!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error submitting feedback:', error);
+    res.status(500).send('An error occurred while submitting feedback.');
+  }
+});
+
+// Route to access feedbacks with pagination
+// Route to access feedbacks with pagination
+app.get('/feedbacks', isAdminAuthenticated, async (req, res) => {
+  try {
+    // Fetch feedback items with attribute value 'viewed' as 'no'
+    const feedbackItems = await Feedback.find({ viewed: 'no' });
+
+    // Calculate the total number of pages based on the total number of feedback items
+    const totalPages = Math.ceil(feedbackItems.length);
+
+    // Parse the current page number from the request query, default to page 1
+    const currentPage = parseInt(req.query.page) || 1;
+
+    // Render the feedbacks view with filtered feedback data, pagination information, and current page
+    res.render('feedbacks', { feedbackItems, totalPages, currentPage });
+  } catch (error) {
+    console.error('Error fetching feedbacks:', error);
+    res.status(500).send('An error occurred while fetching feedbacks.');
+  }
+});
+
+app.post('/feedbacks/:id/update-viewed', async (req, res) => {
+  try {
+      const feedbackId = req.params.id;
+      const feedback = await Feedback.findByIdAndUpdate(feedbackId, { viewed: true }, { new: true });
+
+      if (!feedback) {
+          return res.status(404).send('Feedback not found');
+      }
+
+      res.status(200).send('Feedback marked as viewed successfully');
+  } catch (error) {
+      console.error('Error marking feedback as viewed:', error);
+      res.status(500).send('Internal Server Error');
   }
 });
 

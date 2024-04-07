@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claims Details</title>
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        li:hover {
+            background-color: #e0e0e0;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Claims Details</h1>
+        
+        <% if (claims && claims.length > 0) { %>
+            <ul>
+                <% claims.forEach(claim => { %>
+                    <li>
+                        <strong>User ID:</strong> <%= claim.user_id %><br>
+                        <strong>Name:</strong> <%= claim.name %><br>
+                        <strong>Date Lost:</strong> <%= claim.dateLost %><br>
+                        <strong>Place Lost:</strong> <%= claim.placeLost %><br>
+                        <!-- Add more claim details as needed -->
+                        <!-- claimedDetails.ejs -->
+                        <% if (claim.document) { %>
+                            <strong>Document:</strong> <a href="/download/document/<%= claim._id %>">Download</a><br>
+                        <% } %>
+
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p>No claims found for this item.</p>
+        <% } %>
+    </div>
+</body>
+</html>
