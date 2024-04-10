@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Found Item Details</title>
     <style>
-        /* Additional styles for the found item details page */
+        /* Additional styles for the lost item details page */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -29,13 +29,14 @@
         }
 
         .item-image {
-            width: 100%;
-            height: auto; /* Ensure aspect ratio is maintained */
-            max-height: 300px; /* Adjust max-height as needed */
-            object-fit: contain; /* Maintain aspect ratio and fit within container */
-            border-radius: 10px 10px 0 0;
-            margin-bottom: 20px;
-        }
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain; /* Changed from 'cover' to 'contain' */
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 20px;
+}
+
 
         .details {
             text-align: left;
@@ -48,8 +49,8 @@
             font-size: 18px;
         }
 
-        .back-btn {
-            background-color: #4CAF50;
+        .back-btn, #uploadedLink, #verifiedLink {
+            background-color: #007bff;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -61,37 +62,10 @@
             margin-top: 20px;
             cursor: pointer;
             transition: background-color 0.3s;
-        }
-
-        .back-btn:hover {
-            background-color: #45a049;
-        }
-
-        /* Styles for change status dropdown */
-        .change-status-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        #changeStatusSelect {
-            padding: 8px;
-            font-size: 16px;
-            border-radius: 5px;
             margin-right: 10px;
         }
 
-        #changeStatusBtn {
-            background-color: #007bff;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #changeStatusBtn:hover {
+        .back-btn:hover, #uploadedLink:hover, #verifiedLink:hover {
             background-color: #0056b3;
         }
     </style>

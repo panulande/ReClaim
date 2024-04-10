@@ -437,12 +437,15 @@ app.post('/submit-lost', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
       });
 
       await newItem.save();
-      res.status(200).send('Item reported successfully!');
+      // Send a response with JavaScript code to show alert
+      res.send('<script>alert("Item reported successfully!"); window.location.href = "/report";</script>');
   } catch (error) {
       console.error('Error reporting lost item:', error);
       res.status(500).send('An error occurred while reporting the lost item.');
   }
 });
+
+
 
 
 app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async (req, res) => {
@@ -451,7 +454,7 @@ app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async
       const photo = req.files['photo'][0].buffer; // Get file data from memory
 
       // Assuming username is available in req.user.username
-      const username = req.user.username;
+      const username = req.user.user_id;
 
       const newFoundItem = new FoundItem({
           itemName,
@@ -463,12 +466,14 @@ app.post('/submit-found', upload.fields([{ name: 'photo', maxCount: 1 }]), async
       });
 
       await newFoundItem.save();
-      res.status(200).send('Item found reported successfully!');
+      // Send a response with JavaScript code to show alert
+      res.send('<script>alert("Item found reported successfully!"); window.location.href = "/report";</script>');
   } catch (error) {
       console.error('Error reporting found item:', error);
       res.status(500).send('An error occurred while reporting the found item.');
   }
 });
+
 
  // Define the number of items per page
 
@@ -619,12 +624,14 @@ app.post('/lost/:id/uploaded', async (req, res) => {
       return res.status(404).send('Item not found');
     }
 
-    res.status(200).send('Lost item status updated to "uploaded" successfully');
+    // Show alert message in the browser
+    res.send('<script>alert("Lost item status updated to \'uploaded\' successfully"); window.location.href = "/";</script>');
   } catch (error) {
     console.error('Error updating lost item status:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 // Handle POST request to mark a lost item as verified
 app.post('/lost/:id/verified', async (req, res) => {
   try {
@@ -638,7 +645,8 @@ app.post('/lost/:id/verified', async (req, res) => {
       return res.status(404).send('Item not found');
     }
 
-    res.status(200).send('Lost item status updated to "verified" successfully');
+    // Show alert message in the browser
+    res.send('<script>alert("Lost item status updated to \'verified\' successfully"); window.location.href = "/";</script>');
   } catch (error) {
     console.error('Error updating lost item status:', error);
     res.status(500).send('Internal Server Error');
@@ -846,6 +854,15 @@ app.get('/userSearchFound/:id', async (req, res) => {
   }
 });
 
+app.get('/aboutus',isAuthenticated,(req, res) => {
+  res.render('aboutus');
+});
+app.get('/contactus',isAuthenticated,(req, res) => {
+  res.render('cotactus');
+});
+
+
+
 app.get('/userSearchLost/:id', async (req, res) => {
   try {
     const itemId = req.params.id;
@@ -919,13 +936,15 @@ app.post('/userFound/:id/claim-submit', upload.fields([{ name: 'photo', maxCount
     // Optionally, you can remove the found item from the database if needed
     // await foundItem.remove();
 
-    // Redirect the user or send a success response
-    res.status(200).send('Claimed item submitted successfully!');
+    // Send an alert and redirect the user to the dashboard
+    res.send('<script>alert("Claimed item submitted successfully!"); window.location.href = "/dashboard";</script>');
   } catch (error) {
     console.error('Error submitting claimed item:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 // Route for accessing claimed items
 app.get('/claimed', async (req, res) => {
@@ -1033,6 +1052,10 @@ app.get('/feedback', isAuthenticated, (req, res) => {
   res.render('feedback');
 });
 
+app.get('/feedback', isAuthenticated, (req, res) => {
+  res.render('feedback');
+});
+
 app.post('/submit-feedback', isAuthenticated, async (req, res) => {
   try {
     const { name, email, message } = req.body;
@@ -1046,14 +1069,15 @@ app.post('/submit-feedback', isAuthenticated, async (req, res) => {
     // Save the feedback to the database
     await newFeedback.save();
 
-    // Send a success response
-    res.status(200).send('Feedback submitted successfully!');
+    // Send a success response with JavaScript alert and redirection
+    res.send('<script>alert("Feedback submitted successfully!"); window.location.href = "/dashboard";</script>');
   } catch (error) {
     // Handle errors
     console.error('Error submitting feedback:', error);
     res.status(500).send('An error occurred while submitting feedback.');
   }
 });
+
 
 // Route to access feedbacks with pagination
 // Route to access feedbacks with pagination
@@ -1092,6 +1116,60 @@ app.post('/feedbacks/:id/update-viewed', async (req, res) => {
   }
 });
 
+app.get('/aboutus', isAuthenticated, (req, res) => {
+  res.render('aboutus');
+});
+
+app.get('/searchStatus', async (req, res) => {
+  try {
+      const searchQuery = req.query.query; // Get the search query from the request
+
+      // Perform a database query to search for status items with at least 50% match
+      const searchResults = await StatusItem.find({
+          itemName: { $regex: searchQuery, $options: 'i' }, // Case-insensitive match for itemName
+          $expr: {
+              $gte: [
+                  { $strLenCP: "$itemName" }, // Length of itemName
+                  { $multiply: [{ $strLenCP: searchQuery }, 0.5] } // 50% of the length of the search query
+              ]
+          }
+      });
+
+      // Pagination logic
+      const itemsPerPage = 6; // Number of items per page
+      const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+      const currentPage = parseInt(req.query.page) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, searchResults.length - 1);
+      const currentSearchResults = searchResults.slice(startIndex, endIndex + 1);
+
+      // Render the template with search results for status items
+      res.render('searchStatus', { statusItems: currentSearchResults, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+      console.error('Error searching status items:', error);
+      res.status(500).json({ error: 'An error occurred while searching status items.' }); // Send error response
+  }
+});
+app.get('/status', isAuthenticated, async (req, res) => {
+  try {
+    // Fetch items reported by the authenticated user from the database
+    const userLostItems = await LostItem.find({ user_id: req.user.user_id });
+
+    // Pagination logic
+    const itemsPerPage = 6;
+    const totalPages = Math.ceil(userLostItems.length / itemsPerPage);
+    const currentPage = parseInt(req.query.page) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage - 1, userLostItems.length - 1);
+    const currentLostItems = userLostItems.slice(startIndex, endIndex + 1);
+
+    // Render the status template with the user's reported items
+    res.render('status', { userLostItems: currentLostItems, currentPage, totalPages, itemsPerPage });
+  } catch (error) {
+    console.error('Error fetching user reported items:', error);
+    res.status(500).send('An error occurred while fetching user reported items.');
+  }
+});
 
 
 

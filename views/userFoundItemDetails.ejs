@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Found Item Details</title>
     <style>
-        /* Additional styles for the found item details page */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -30,9 +29,8 @@
 
         .item-image {
             width: 100%;
-            height: auto; /* Ensure aspect ratio is maintained */
-            max-height: 300px; /* Adjust max-height as needed */
-            object-fit: contain; /* Maintain aspect ratio and fit within container */
+            max-height: 300px;
+            object-fit: contain;
             border-radius: 10px 10px 0 0;
             margin-bottom: 20px;
         }
@@ -48,7 +46,7 @@
             font-size: 18px;
         }
 
-        .back-btn {
+        .back-btn, #Claim {
             background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
@@ -61,38 +59,11 @@
             margin-top: 20px;
             cursor: pointer;
             transition: background-color 0.3s;
-        }
-
-        .back-btn:hover {
-            background-color: #45a049;
-        }
-
-        /* Styles for change status dropdown */
-        .change-status-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        #changeStatusSelect {
-            padding: 8px;
-            font-size: 16px;
-            border-radius: 5px;
             margin-right: 10px;
         }
 
-        #changeStatusBtn {
-            background-color: #007bff;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #changeStatusBtn:hover {
-            background-color: #0056b3;
+        .back-btn:hover, #Claim:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -112,8 +83,5 @@
         <a href="/userFound" class="back-btn">Back to Found Items</a>
         <a href="/userFound/<%= foundItem._id %>/claim" id="Claim">Claim</a>
     </div>
-
-
-
 </body>
 </html>

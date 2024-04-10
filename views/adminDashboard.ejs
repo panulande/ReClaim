@@ -3,46 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
     <style>
-        .link {
-            width: 200px;
-            height: 100px; /* Height of each link division */
-            float: left; /* Float elements to make them appear side by side */
-            margin-right: 20px; /* Space between link divisions */
-            text-align: center; /* Center align text */
-            line-height: 100px; /* Center vertically */
-            font-size: 18px; /* Font size */
-            color: white; /* Text color */
-            font-weight: bold; /* Bold font weight */
-            text-decoration: none; /* Remove default underline for links */
+        .container {
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .boxes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .box {
+            width: 200px; /* Adjusted width */
+            height: 100px;
+            float: left;
+            margin-right: 20px;
+            text-align: center;
+            line-height: 100px;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
         }
 
-        /* Define different colors for each link division */
-        .link1 {
+        /* Define different colors for each box */
+        .box:nth-child(1) {
             background-color: red;
         }
 
-        .link2 {
+        .box:nth-child(2) {
             background-color: blue;
         }
 
-        .link3 {
+        .box:nth-child(3) {
             background-color: green;
         }
 
-        .link4 {
+        .box:nth-child(4) {
             background-color: orange;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to the dashboard</h1>
-    
-    <!-- Four link divisions wrapped in anchor tags -->
-    <a href="found" class="link link1">Update Reports</a>
-    <a href="claimed" class="link link2">claimed</a>
-    <a href="feedbacks" class="link link3">feedbacks</a>
-    <a href="#" class="link link4">Link 4</a>
+    <header>
+        <div class="logo">ReClaim</div>
+        <input type="checkbox" id="nav_check" hidden>
+        <nav>
+            <ul>
+                <li>
+                    <a href="" class="active">Home</a>
+                </li>
+   
+                <li>
+                    <a href="adminlogin">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <label for="nav_check" class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </label>
+    </header>
+
+    <div class="container">
+        <h1 class="header">Welcome to the Dashboard</h1>
+        <div class="boxes">
+            <a href="found" class="box">Update Reports</a>
+            <a href="claimed" class="box">claimed</a>
+            <a href="feedbacks" class="box">feedbacks</a>
+            <a href="#" class="box">Chat</a>
+        </div>
+    </div>
 </body>
 </html>

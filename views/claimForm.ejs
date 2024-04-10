@@ -1,29 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claimed Item Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claimed Item Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        #claimedItemForm {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px; /* Add margin to separate from the grid */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="file"] {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+        }
+
+    </style>
 </head>
 <body>
-<h2>Claimed Item Form</h2>
-<form id="claimedItemForm" enctype="multipart/form-data" action="/userFound/<%= foundItem._id %>/claim-submit" method="post">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
-    
-    <label for="placeLost">Place Lost:</label>
-    <input type="text" id="placeLost" name="placeLost" required><br><br>
-    
-    <label for="dateLost">Date Lost:</label>
-    <input type="date" id="dateLost" name="dateLost" required><br><br>
-    
-    <label for="document">Document:</label>
-    <input type="file" id="document" name="document" accept=".pdf,.doc,.docx" required><br><br>
-    
-    <label for="photo">Photo (Optional):</label>
-    <input type="file" id="photo" name="photo" accept="image/*"><br><br>
-    
-    <input type="submit" value="Submit">
-</form>
+    <div id="norm">
+        <h2>Claimed Item Form</h2>
+        <form id="claimedItemForm" enctype="multipart/form-data" action="/userFound/<%= foundItem._id %>/claim-submit" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="placeLost">Place Lost:</label>
+            <input type="text" id="placeLost" name="placeLost" required>
+            
+            <label for="dateLost">Date Lost:</label>
+            <input type="date" id="dateLost" name="dateLost" required>
+            
+            <label for="document">Document:</label>
+            <input type="file" id="document" name="document" accept=".pdf,.doc,.docx" required>
+            
+            <label for="photo">Photo (Optional):</label>
+            <input type="file" id="photo" name="photo" accept="image/*">
+            
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div class="main-grid">
+        <!-- Include other content of the main grid here -->
+    </div>
 </body>
 </html>

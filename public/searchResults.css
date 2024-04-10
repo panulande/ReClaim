@@ -1,0 +1,301 @@
+/* SearchResults.css */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+}
+
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#searchInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 300px;
+    margin-right: 10px;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.pagination a.active {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Grid Styles */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    justify-items: center;
+}
+
+.item-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light gray background color */
+    text-align: center;
+    width: 200px;
+    height: 350px; /* Adjusted height */
+    transition: transform 0.3s ease;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    z-index: -1;
+}
+
+
+.item-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.item-image {
+    width: auto;
+    height: 150px;
+    display: block;
+    margin: 0 auto;
+}
+
+.details-container {
+    font-size: 14px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    height: 600px;
+    width: 80%;
+    position: relative;
+    left:10%;
+    padding-top: 80px;    
+}
+
+.item-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light gray background color */
+    text-align: center;
+    width: 200px;
+    height: 380px; /* Adjusted height */
+    transition: transform 0.3s ease;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    z-index: -1;
+}
+
+
+
+.image-container {
+    width: 100%;
+    height: 60%;
+    overflow: hidden;
+    padding-bottom: 40px;
+
+}
+
+.item-image {
+    width: 150px; /* Fixed width */
+    height: 150px; /* Fixed height */
+    object-fit: cover; /* Maintain aspect ratio and cover container */
+    border-radius: 10px; /* Keep rounded corners */
+    margin: 0 auto; /* Center the image horizontally */
+    display: block; /* Ensure the image is displayed as a block element */
+}
+.details-container {
+    font-size: 14px;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.pagination a.active {
+    background-color: #333;
+    color: #fff;
+}
+#searchInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 300px;
+    margin-right: 10px;
+}
+
+/* Style for search button */
+#searchButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Style for search container */
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+        /* styles.css */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .item-box {
+            border: 1px solid #ddd;
+            padding: 3px;
+            background-color: #f9f9f9; /* Light gray background color */
+            text-align: center;
+            transition: transform 0.3s ease;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        }
+
+        .image-container {
+            width: 100%;
+            height: 60%;
+            overflow: hidden;
+            padding-bottom: 10px;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .details-container {
+            font-size: 14px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 5px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .pagination a.active {
+            background-color: #333;
+            color: #fff;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        /* Style for search button */
+        #searchButton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Style for search container */
+        .search-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    color: black;
+}

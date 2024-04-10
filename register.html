@@ -5,63 +5,158 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="login.css">
-    <title>Responsive Navbar using HTML & CSS</title>
+    <title>Sign Up - ReClaim</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        .txt_field {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .signup_link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .signup_link a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .signup_link a:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">ReClaim</div>
-        <input type="checkbox" id="nav_check" hidden>
         <nav>
             <ul>
                 <li>
-                    <a href="login" >Login</a>
+                    <a href="login">Login</a>
                 </li>
                 <li>
                     <a href="register" class="active">Sign Up</a>
                 </li>
             </ul>
         </nav>
-        <label for="nav_check" class="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </label>
     </header>
-    <main>
-        <div class="center">
-            <h1>Sign Up</h1>
-            <form method="post" action="/register"> <!-- Added action attribute with the registration route -->
-                <div class="txt_field">
-                    <input type="text" name="name" required> <!-- Added name attribute -->
-                    <span></span>
-                    <label>Full Name</label>
-                </div>
-                <div class="txt_field">
-                    <input type="text" name="email" required> <!-- Added name attribute -->
-                    <span></span>
-                    <label>Email</label>
-                </div>
-                <div class="txt_field">
-                    <input type="text" name="dob" required> <!-- Added name attribute -->
-                    <span></span>
-                    <label>Date of Birth</label>
-                </div>
-                <div class="txt_field">
-                    <input type="text" name="username" required> <!-- Added name attribute -->
-                    <span></span>
-                    <label>Username</label>
-                </div>
-                <div class="txt_field">
-                    <input type="password" name="password" required> <!-- Added name attribute -->
-                    <span></span>
-                    <label>Password</label>
-                </div>
-                <input type="submit" value="Sign Up">
-                <div class="signup_link">
-                    Already a member? <a href="login">Login</a>
-                </div>
-            </form>
-        </div>
-    </main>
+    <div class="container">
+        <form method="post" action="/register">
+            <div class="txt_field">
+                <input type="text" name="name" required>
+                <span></span>
+                <label>Full Name</label>
+            </div>
+            <div class="txt_field">
+                <input type="text" name="email" required>
+                <span></span>
+                <label>Email</label>
+            </div>
+            <div class="txt_field">
+                <input type="text" name="dob" required>
+                <span></span>
+                <label>Date of Birth</label>
+            </div>
+            <div class="txt_field">
+                <input type="text" name="username" required>
+                <span></span>
+                <label>Username</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" name="password" required>
+                <span></span>
+                <label>Password</label>
+            </div>
+            <input type="submit" value="Sign Up">
+            <div class="signup_link">
+                Already a member? <a href="login">Login</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
